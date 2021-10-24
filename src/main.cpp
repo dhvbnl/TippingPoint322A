@@ -1,11 +1,11 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       Synergy Robotics 322A                                     */
-/*    Created:      Sat Oct 23 2021                                           */
-/*    Description:  Tipping Point V1                                          */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
+/*-------------------------------------------*/
+/*                                           */
+/*    Program:      TippingPoint322A         */
+/*    Author:       Synergy Robotics 322A    */
+/*    Created:      Sat Oct 23 2021          */
+/*    Description:  Tipping Point V1         */
+/*                                           */
+/*-------------------------------------------*/
 #include "vex.h"
 
 using namespace vex;
@@ -20,18 +20,13 @@ void pre_auton(void) {
 void autonomous(void) {
 }
 
-void usercontrol(void) {
-  while (1) {
-    wait(20, msec);
-  }
-}
-
 int main() {
+  screenGUI();
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+  Competition.drivercontrol(screenGUI);
 
   pre_auton();
-  
+
   while (true) {
     wait(100, msec);
   }
