@@ -21,9 +21,8 @@ void autonomous(void) {
 }
 
 int main() {
-  screenGUI();
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(screenGUI);
+  Competition.drivercontrol(opcontrol);
 
   pre_auton();
 

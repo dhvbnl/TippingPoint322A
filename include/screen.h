@@ -1,5 +1,6 @@
 //complete functions
 void screenGUI();
+void drawButton(int info[], vex::color);
 
 //getters
-bool getButtonPressing(int xStart, int yStart, int xSize, int ySize);
+bool getButtonPressing(int info[]);

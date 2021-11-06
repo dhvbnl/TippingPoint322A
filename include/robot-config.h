@@ -32,4 +32,8 @@ extern encoder mTracker;
 extern limit lBackTransmission;
 extern limit rBackTransmission;
 
+extern digital_out mBackDriveLift;
+
+extern pot lBackLift;
+
 void vexcodeInit(void);
