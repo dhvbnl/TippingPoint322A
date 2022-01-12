@@ -13,13 +13,18 @@
 #include "lifts.h"
 #include "opcontrol.h"
 
+//global var
+//distance between tracking wheels
+const double trackWidth = 4.625;
+
 //maximum safe temperature for motors
 const int tempLimit = 55;
 
 //convert between velocity and voltage.
 const double voltageConverstion = 100/12;
 
-//global var
+const double convertInches = (2.75 * M_PI) / 360;
+const double convertDegrees = 360 / (2.75 * M_PI);
 
 
 #define waitUntil(condition)                                                   \
