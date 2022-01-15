@@ -6,7 +6,7 @@ void opcontrol()
   setDrivetrainCreep();
 
   //start all control tasks
-  //thread driveMove(drivetrainControl);
+  thread driveMove(drivetrainControl);
   task liftMove(liftControl);
   
   while(true)

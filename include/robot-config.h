@@ -12,7 +12,7 @@ extern motor rMiddleDrive;
 
 //transmission drive motors
 extern motor lBackDriveBackLift;
-extern motor rBackDriveFrontLift;
+extern motor rBackDriveCascadeLift;
 
 //intake/dr4b shared motor
 extern motor mFrontIntakeBackDlift;
