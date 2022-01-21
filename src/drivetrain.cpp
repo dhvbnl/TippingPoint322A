@@ -1,10 +1,15 @@
 #include "vex.h"
 
+bool mBackDriveLiftTransmissionState = false;
+
+thread mBackDriveLiftShift;
+
 //thread for drivetrain to respond to joystick movements
 void drivetrainControl() {
   while (true) {
     //set speed based on inputs
     setDrivetrainSpeed(getLeftSpeedInLinear(), getRightSpeedInLinear());
+    Controller.ButtonY.pressed(setMBackDriveLiftTranmission);
     wait(10, msec);
   }
 }
@@ -17,6 +22,15 @@ void setDrivetrainSpeed(int leftSpeed, int rightSpeed) {
   lMiddleDrive.spin(fwd, leftSpeed, volt);
   rMiddleDrive.spin(fwd, rightSpeed, volt);
   rFrontDrive.spin(fwd, rightSpeed, volt);
+  if(!mBackDriveLift.value() && lBackTransmission.value() && rBackTransmission.value()){
+    lBackDriveBackLift.spin(reverse, leftSpeed, volt);
+    rBackDriveCascadeLift.spin(reverse, rightSpeed, volt);
+    }
+}
+
+void setMBackDriveLiftTranmission(){
+    mBackDriveLiftTransmissionState ^= true; 
+    mBackDriveLift.set(mBackDriveLiftTransmissionState);
 }
 
 void setDrivetrainCreep() {

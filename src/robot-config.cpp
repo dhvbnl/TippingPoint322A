@@ -7,14 +7,14 @@ brain Brain;
 controller Controller = controller(primary);
 
 /* ENTER CORRECT PORTS FOR MOTORS*/
-motor lFrontDrive = motor(PORT1, ratio6_1, false);
-motor lMiddleDrive = motor(PORT2, ratio6_1, false);
+motor lFrontDrive = motor(PORT1, ratio6_1, true);
+motor lMiddleDrive = motor(PORT2, ratio6_1, true);
 
 motor rFrontDrive = motor(PORT3, ratio6_1, true);
 motor rMiddleDrive = motor(PORT4, ratio6_1, true);
 
-motor lBackDriveBackLift = motor(PORT5, ratio6_1, true);
-motor rBackDriveFrontLift = motor(PORT6, ratio6_1, true);
+motor lBackDriveBackLift = motor(PORT6, ratio6_1, true);
+motor rBackDriveCascadeLift = motor(PORT5, ratio6_1, true);
 
 motor mFrontIntakeBackDlift = motor(PORT7, ratio18_1, true);
 
