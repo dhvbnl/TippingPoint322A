@@ -76,7 +76,7 @@ int getPosition()
       coor.yPos += deltaY;
 
       //encoderH.changed(horizontalmove);
-      if (coor.deltaH > 0.01) {
+      if (fabs(coor.deltaH) > 0.01) {
         horizontalmove();
       }
 
