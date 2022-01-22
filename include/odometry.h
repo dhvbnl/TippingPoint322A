@@ -11,3 +11,4 @@ void horizontalmove();
 
 //debug
 void printPos();
+void hi();

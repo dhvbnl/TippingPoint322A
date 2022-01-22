@@ -12,118 +12,33 @@ struct Coordinate {
   double headingRad;
 } coor; 
 
-int getPosition()
-{
-  double currentLeft = 0.0;
-  double currentRight = 0.0;
-  double currentH = 0.0; 
-  double previousLeft = 0.0;
-  double previousRight = 0.0;
-  double previousH = 0.0;
-  double deltaL = 0.0;
-  double deltaR = 0.0;
-  double deltaX = 0.0;
-  double deltaY = 0.0;
-  double thetaEncoderRad = 0.0;
-  double thetaInertialRad = 0.0;
-  double lRadius = 0.0;
-  double prevHeadRad = 0.0;
-
-  coor.xPos = 0.0;
-  coor.yPos = 0.0;
-  coor.headingRad = 0.0;
-  coor.deltaH = 0.0;
-  coor.linearDistance = 0.0;
-
-  while (true)
-  {
-      // Reading the odometry encoders
-      currentLeft = getLeftEncoderRotation() * convertInches; 
-      currentRight = getRightEncoderRotation() * convertInches; 
-      deltaL = currentLeft - previousLeft;
-      deltaR = currentRight - previousRight;
-      currentH = encoderH.rotation(deg) * convertInches;
-      coor.deltaH = currentH - previousH;
-
-      thetaEncoderRad = atan((deltaR - deltaL)/trackWidth); // calculated change in heading 
-
-      // Sensor-based heading reading
-      coor.headingRad = getInertialHeading() * (M_PI / 180);
-
-      // Convert head from clockwise angle to counterclockwise (unit circle-based) angle
-      coor.headingRad = fmod(((2.5 * M_PI) - coor.headingRad), (2 * M_PI)); 
-    
-      thetaInertialRad = coor.headingRad - prevHeadRad; // change in heading using inertial
-      coor.thetaRad = thetaInertialRad;
-  
-
-      // Calculate the incremental linear distance traveled.
-      if (fabs(coor.thetaRad) < 0.01)
-      {
-          coor.linearDistance = (deltaL + deltaR) / 2.0;
-      }
-      else
-      {
-          lRadius = deltaL / coor.thetaRad; 
-          coor.linearDistance = 2.0 * (lRadius + (trackWidth / 2.0)) * sin(coor.thetaRad / 2.0);
-      }
-
-      // Calculate the incremental 2-dimensional coordinates x & y
-      deltaX = coor.linearDistance * cos(coor.headingRad + (coor.thetaRad / 2.0));
-      deltaY = coor.linearDistance * sin(coor.headingRad + (coor.thetaRad / 2.0));
-
-      coor.xPos += deltaX; 
-      coor.yPos += deltaY;
-
-      //encoderH.changed(horizontalmove);
-<<<<<<< Updated upstream
-      if (fabs(coor.deltaH) > 0.01) {
-        horizontalmove();
-=======
-      if (coor.deltaH > 0.01) {
-        //horizontalmove();
->>>>>>> Stashed changes
-      }
-
-      previousLeft = currentLeft;
-      previousRight = currentRight;
-      prevHeadRad = coor.headingRad;
-      previousH = currentH;
-
-      wait(10, msec); 
-      Brain.Screen.clearLine();
-  }
-
-  return 0;
-}
-
 void horizontalmove() {
   double refAngle;
-  int quad = 0;
+  int dir = 0;
   double headingDeg = coor.headingRad * (180 / M_PI);
 
   if (headingDeg < 90) { // Quad 1
     refAngle  = headingDeg;
-    quad = 1;
+    dir = 1;
   } 
   else if (headingDeg < 180) { // Quad 4
     refAngle = 180 - headingDeg;
-    quad = 2;
+    dir = 2;
   } 
   else if (headingDeg < 270) { // Quad 3
     refAngle = headingDeg - 180;
-    quad = 3;
+    dir = 3;
   } 
   else {
     refAngle = 360 - headingDeg; // Quad 2
-    quad = 4;
+    dir = 4;
   }
 
   double deltaX = cos(refAngle * 180 / M_PI) * fabs(coor.deltaH);
   double deltaY = sin(refAngle * 180 / M_PI) * fabs(coor.deltaH); 
 
   if (coor.deltaH > 0) { // moving right (positive direction)
-    if (quad % 2 == 1) { // Quads 1 or 3
+    if (dir % 2 == 1) { // Quads 1 or 3
       coor.xPos += deltaX;
       coor.yPos -= deltaY;
     } else { // Quads 2 or 4
@@ -132,7 +47,7 @@ void horizontalmove() {
     }
   } 
   else { // moving left (negative direction)
-    if (quad % 2 == 1) {
+    if (dir % 2 == 1) {
       coor.xPos -= deltaX;
       coor.yPos += deltaY;
     } else {
@@ -140,22 +55,6 @@ void horizontalmove() {
       coor.yPos -= deltaY;
     }
   }
-}
-
-void adjustStraightMotionPath() { 
-  while (true) {
-    if (fabs(coor.thetaRad) > errorMargin) {
-      ////
-    }
-    wait(200, msec);
-  }
-}
-
-void test() {
-  thread track(getPosition);
-  thread adjust(adjustStraightMotionPath);
-
-  adjust.interrupt();
 }
 
 double getxPos() {
@@ -219,7 +118,7 @@ int setPos (double x, double y, bool repeat) {
     Controller.Screen.clearLine();
     Controller.Screen.print("here");
     printf(" refAng: %f", refAngle);
-    //driveProfile(hyp, true);
+    driveProfileslow(hyp, true);
     
     if (repeat) 
     {
@@ -231,7 +130,96 @@ int setPos (double x, double y, bool repeat) {
   return 0;
 } 
 
+int getPosition()
+{
+  double currentLeft = 0.0;
+  double currentRight = 0.0;
+  double currentH = 0.0; 
+  double previousLeft = 0.0;
+  double previousRight = 0.0;
+  double previousH = 0.0;
+  double deltaL = 0.0;
+  double deltaR = 0.0;
+  double deltaX = 0.0;
+  double deltaY = 0.0;
+  double thetaEncoderRad = 0.0;
+  double thetaInertialRad = 0.0;
+  double lRadius = 0.0;
+  double prevHeadRad = 0.0;
+
+  coor.headingRad = 0.0;
+  coor.deltaH = 0.0;
+  coor.linearDistance = 0.0;
+  //double errorX = getLeftEncoderRotation() * convertInches;
+  //double errorY = getLeftEncoderRotation() * convertInches;
+  coor.xPos = 0.0;
+  coor.yPos = 0.0;
+
+  while (true)
+  {
+      // Reading the odometry encoders
+      currentLeft = getLeftEncoderRotation() * convertInches; 
+      currentRight = getRightEncoderRotation() * convertInches; 
+      deltaL = currentLeft - previousLeft;
+      deltaR = currentRight - previousRight;
+      currentH = encoderH.rotation(deg) * convertInches;
+      coor.deltaH = currentH - previousH;
+
+      thetaEncoderRad = atan((deltaR - deltaL)/trackWidth); // calculated change in heading 
+
+      // Sensor-based heading reading
+      coor.headingRad = getInertialHeading() * (M_PI / 180);
+
+      // Convert head from clockwise angle to counterclockwise (unit circle-based) angle
+      coor.headingRad = fmod(((2.5 * M_PI) - coor.headingRad), (2 * M_PI)); 
+    
+      thetaInertialRad = coor.headingRad - prevHeadRad; // change in heading using inertial
+      coor.thetaRad = thetaInertialRad;
+  
+
+      // Calculate the incremental linear distance traveled.
+      if (fabs(coor.thetaRad) < 0.01)
+      {
+          coor.linearDistance = (deltaL + deltaR) / 2.0;
+      }
+      else
+      {
+          lRadius = deltaL / coor.thetaRad; 
+          coor.linearDistance = 2.0 * (lRadius + (trackWidth / 2.0)) * sin(coor.thetaRad / 2.0);
+      }
+
+      // Calculate the incremental 2-dimensional coordinates x & y
+      deltaX = coor.linearDistance * cos(coor.headingRad + (coor.thetaRad / 2.0));
+      deltaY = coor.linearDistance * sin(coor.headingRad + (coor.thetaRad / 2.0));
+
+      coor.xPos += deltaX; 
+      coor.yPos += deltaY;
+      printPos();
+
+      //encoderH.changed(horizontalmove);
+      /* if (fabs(coor.deltaH) > 0.01) {
+        horizontalmove();
+      } */
+      previousLeft = currentLeft;
+      previousRight = currentRight;
+      prevHeadRad = coor.headingRad;
+      previousH = currentH;
+
+      wait(10, msec); 
+      Brain.Screen.clearLine();
+    }
+
+  return 0;
+}
+
+void hi() {
+  printf("hi");
+  thread track(getPosition);
+} 
+
 void printPos() {
   printf("x: %f", coor.xPos);
   printf("y: %f\n", coor.yPos);
 }
+
+

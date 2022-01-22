@@ -20,19 +20,19 @@ motor mFrontIntakeBackDlift = motor(PORT10, ratio36_1, true);
 
 motor mBackRotator = motor(PORT8, ratio18_1, true);
 
-inertial mInertial = inertial(PORT9);
+inertial mInertial = inertial(PORT5);
 
 triport Expander = triport(PORT20);
 
 encoder lTraker = encoder(Expander.G);
 encoder rTracker = encoder(Expander.C);
-//encoder mTracker = encoder(INSERT);
+encoder encoderH = encoder(Brain.ThreeWirePort.B);
 
 limit lBackTransmission = limit(Expander.B);
 limit rBackTransmission = limit(Expander.A);
 
 digital_out mBackDriveLift = digital_out(Expander.E);
-digital_out mFrontLift = digital_out(Brain.ThreeWirePort.B);
+digital_out mFrontLift = digital_out(Brain.ThreeWirePort.A);
 
 pot lBackLift = pot(Expander.F);
 

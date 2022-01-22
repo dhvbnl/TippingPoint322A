@@ -12,6 +12,10 @@
 #include "drivetrain.h"
 #include "lifts.h"
 #include "opcontrol.h"
+#include "motion_profile.h"
+#include "odometry.h"
+#include "preauton.h"
+#include "mapping.h"
 
 //global var
 //distance between tracking wheels

@@ -36,6 +36,7 @@ void setMBackDriveLiftTranmission(){
     mBackDriveLiftTransmissionState ^= true; 
     mBackDriveLift.set(mBackDriveLiftTransmissionState);
     rBackDriveCascadeLift.stop();
+    lBackDriveBackLift.setBrake(coast);
     wait(200, msec);
 }
 
@@ -50,6 +51,8 @@ void setDrivetrainCreep() {
   lMiddleDrive.setStopping(coast);
   rMiddleDrive.setStopping(coast);
   rFrontDrive.setStopping(coast);
+  lBackDriveBackLift.setStopping(coast);
+  rBackDriveCascadeLift.setStopping(coast);
 }
 void setDrivetrainLock() {
   lFrontDrive.setStopping(brake);
@@ -114,8 +117,8 @@ int getrFrontDriveSpeed() {return rFrontDrive.velocity(pct);}
 double getInertialRotation() { return mInertial.rotation();}
 double getInertialHeading() { return mInertial.heading();}
 
-double getLeftEncoderRotation() { return lTraker.rotation(deg); }
-double getRightEncoderRotation() { return rTracker.rotation(deg); }
+double getLeftEncoderRotation() { return -1 * lTraker.rotation(deg); }
+double getRightEncoderRotation() { return -1 * rTracker.rotation(deg); }
 
 int getlFrontDriveTemp() {return lFrontDrive.temperature(celsius);}
 int getlMiddleDriveTemp() {return lMiddleDrive.temperature(celsius);}
@@ -130,6 +133,8 @@ void resetDrivetrain() {
   lMiddleDrive.resetRotation();
   rMiddleDrive.resetRotation();
   rFrontDrive.resetRotation();
+  lBackDriveBackLift.resetRotation();
+  rBackDriveCascadeLift.resetRotation();
 }
 
 void resetEncoders() {
@@ -141,8 +146,11 @@ void resetEncoders() {
 //calibrate inertial sensor for preauton
 void calibrateInertial() {
   mInertial.calibrate();
-  while(mInertial.isCalibrating())
+  while(mInertial.isCalibrating()) {
+    printf("ongoing \n");
     wait(100, msec);
+  }
+  printf("done\n");
 }
 
 //checks tempeatures of all drive motors are returns in a string which motors are hot
@@ -169,10 +177,11 @@ std::string tempInfoDrive() {
 
 // turn the robot based on absolute position from the original point of the robot
 void drivetrainTurn(double targetdeg) {
+
    // proportionality constants
-  double kP = 0.42;
-  double kI = 0.0012;
-  double kD = 0.6;
+  double kP = 0.45;
+  double kI = 0.0001;
+  double kD = 0.01;
 
   // PID loop variables
   double error = 1;
@@ -212,21 +221,28 @@ void drivetrainTurn(double targetdeg) {
 
     // powering the motors
     if (useright) {
-      lFrontDrive.spin(fwd, motorPower, pct);
-      lMiddleDrive.spin(fwd, motorPower, pct);
-      rMiddleDrive.spin(fwd, -motorPower, pct);
-      rFrontDrive.spin(fwd, -motorPower, pct);
-    } else {
       lFrontDrive.spin(fwd, -motorPower, pct);
       lMiddleDrive.spin(fwd, -motorPower, pct);
+      lBackDriveBackLift.spin(fwd, motorPower, pct);
       rMiddleDrive.spin(fwd, motorPower, pct);
       rFrontDrive.spin(fwd, motorPower, pct);
+      rBackDriveCascadeLift.spin(fwd, -motorPower, pct);
+    } else {
+      lFrontDrive.spin(fwd, motorPower, pct);
+      lMiddleDrive.spin(fwd, motorPower, pct);
+      lBackDriveBackLift.spin(fwd, -motorPower, pct);
+      rMiddleDrive.spin(fwd, -motorPower, pct);
+      rFrontDrive.spin(fwd, -motorPower, pct);
+      rBackDriveCascadeLift.spin(fwd, motorPower, pct);
     }
   }
   lMiddleDrive.stop();
   rMiddleDrive.stop();
   lFrontDrive.stop();
   rFrontDrive.stop();
+  rBackDriveCascadeLift.stop();
+  lBackDriveBackLift.stop();
+
 }
 
 //drive movement based on time
@@ -235,11 +251,17 @@ void timeDrive(double speed, int timeLength) {
   rFrontDrive.spin(fwd, speed, volt);
   lMiddleDrive.spin(fwd, speed, volt);
   rMiddleDrive.spin(fwd, speed, volt);
+  lBackDriveBackLift.spin(fwd, -speed, volt);
+  rBackDriveCascadeLift.spin(fwd, -speed, volt);
+
   wait(timeLength, msec);
+
   lFrontDrive.stop();
   rFrontDrive.stop();
   lMiddleDrive.stop();
   rMiddleDrive.stop();
+  lBackDriveBackLift.stop();
+  rBackDriveCascadeLift.stop();
 }
 
 //turn based on different left and right speed to move in a curve

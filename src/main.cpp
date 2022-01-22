@@ -12,20 +12,14 @@ using namespace vex;
 
 competition Competition;
 
-void pre_auton(void) {
-  vexcodeInit();
-  setMFrontLiftCylinder();
-
-}
-
 void autonomous(void) {
 }
 
 int main() {
-  Competition.autonomous(autonomous);
+  Competition.autonomous(redalliance);
   Competition.drivercontrol(opcontrol);
 
-  pre_auton();
+  preauton();
 
   while (true) {
     wait(100, msec);

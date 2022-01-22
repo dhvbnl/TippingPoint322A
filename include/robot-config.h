@@ -27,7 +27,7 @@ extern triport bExpander;
 
 extern encoder lTraker;
 extern encoder rTracker;
-extern encoder mTracker;
+//extern encoder mTracker;
 extern encoder encoderH;
 
 extern limit lBackTransmission;
