@@ -34,6 +34,7 @@ extern limit lBackTransmission;
 extern limit rBackTransmission;
 
 extern digital_out mBackDriveLift;
+extern digital_out mFrontLift;
 
 extern pot lBackLift;
 

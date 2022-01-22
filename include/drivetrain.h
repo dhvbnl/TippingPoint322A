@@ -8,6 +8,7 @@ void drivetrainControl();
 //setters
 void setDrivetrainSpeed(int leftSpeed, int rightSpeed);
 void setMBackDriveLiftTranmission();
+void setMFrontLiftCylinder();
 
 void setDrivetrainCreep();
 void setDrivetrainLock();

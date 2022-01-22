@@ -1,15 +1,19 @@
 #include "vex.h"
 
 bool mBackDriveLiftTransmissionState = false;
-
-thread mBackDriveLiftShift;
+bool MFrontLiftCylinderState = false;
 
 //thread for drivetrain to respond to joystick movements
 void drivetrainControl() {
   while (true) {
     //set speed based on inputs
     setDrivetrainSpeed(getLeftSpeedInLinear(), getRightSpeedInLinear());
-    Controller.ButtonY.pressed(setMBackDriveLiftTranmission);
+    if( getYPos()){
+      setMFrontLiftCylinder();
+    } else if (getRightPos()){
+      setMBackDriveLiftTranmission();
+    }
+    
     wait(10, msec);
   }
 }
@@ -31,6 +35,14 @@ void setDrivetrainSpeed(int leftSpeed, int rightSpeed) {
 void setMBackDriveLiftTranmission(){
     mBackDriveLiftTransmissionState ^= true; 
     mBackDriveLift.set(mBackDriveLiftTransmissionState);
+    rBackDriveCascadeLift.stop();
+    wait(200, msec);
+}
+
+void setMFrontLiftCylinder(){
+    MFrontLiftCylinderState ^= true; 
+    mFrontLift.set(MFrontLiftCylinderState);
+    wait(200, msec);
 }
 
 void setDrivetrainCreep() {
@@ -58,11 +70,11 @@ void setDrivetrainHold() {
 //gets movement speed based on joystick location and
 //converts to voltage evenly
 int getLeftSpeedInLinear() {
-  return (getAxis3Pos() + getAxis4Pos()) / voltageConverstion;
+  return (getAxis3Pos() - getAxis4Pos()) / voltageConverstion;
 }
 
 int getRightSpeedInLinear() {
-  return (getAxis3Pos() - getAxis4Pos()) / voltageConverstion;
+  return (getAxis3Pos() + getAxis4Pos()) / voltageConverstion;
 }
 
 //gets movement speed based on joystick location and 

@@ -76,8 +76,13 @@ int getPosition()
       coor.yPos += deltaY;
 
       //encoderH.changed(horizontalmove);
+<<<<<<< Updated upstream
       if (fabs(coor.deltaH) > 0.01) {
         horizontalmove();
+=======
+      if (coor.deltaH > 0.01) {
+        //horizontalmove();
+>>>>>>> Stashed changes
       }
 
       previousLeft = currentLeft;
@@ -214,7 +219,7 @@ int setPos (double x, double y, bool repeat) {
     Controller.Screen.clearLine();
     Controller.Screen.print("here");
     printf(" refAng: %f", refAngle);
-    driveProfile(hyp, true);
+    //driveProfile(hyp, true);
     
     if (repeat) 
     {
