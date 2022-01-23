@@ -22,8 +22,8 @@ void redalliance() {
   drivetrainTurn(300);
   wait(100, msec);
   driveProfile(27, false);
-  drivetrainTurn(345);
-  timeDrive(-7, 2500);
+  drivetrainTurn(343);
+  timeDrive(-7, 3000);
   setMFrontLiftCylinder();
   timeDrive(5, 1500);
   getPos.interrupt();
@@ -34,4 +34,33 @@ void skills() {
   wait(10, msec);
   setPos(-2.3, 80, false);
   getPos.interrupt();
+}
+
+void seesawGoal() {
+  thread getPos(getPosition);
+  timeDrive(-4, 300);
+  wait(100, msec);
+  timeDrive(4, 700);
+  wait(100, msec);
+  getPos.interrupt();
+}
+
+void farGoal() {
+  thread getPos(getPosition);
+  timeDrive(-4, 1000);
+  setMFrontLiftCylinder();
+  wait(100, msec);
+  timeDrive(4, 1000);
+  wait(100, msec);
+  getPos.interrupt();
+}
+
+void elims() {
+  thread getPos(getPosition);
+  timeDrive(-11, 860);
+  wait(200, msec);
+  setMFrontLiftCylinder();
+  wait(200, msec);
+  timeDrive(11, 900);
+
 }

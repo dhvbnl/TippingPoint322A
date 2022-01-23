@@ -16,7 +16,7 @@ void autonomous(void) {
 }
 
 int main() {
-  Competition.autonomous(redalliance);
+  Competition.autonomous(elims);
   Competition.drivercontrol(opcontrol);
 
   preauton();
