@@ -7,16 +7,14 @@ void drivetrainControl();
 
 //setters
 void setDrivetrainSpeed(int leftSpeed, int rightSpeed);
-void setMBackDriveLiftTranmission();
-void setMFrontLiftCylinder();
 
 void setDrivetrainCreep();
 void setDrivetrainLock();
 void setDrivetrainHold();
 
 //getters
-int getLeftSpeedInLinear();
-int getRightSpeedInLinear();
+double getLeftSpeedInLinear();
+double getRightSpeedInLinear();
 
 int getLeftSpeedInSlew();
 int getRightSpeedInSlew();
@@ -31,11 +29,21 @@ double getInertialHeading();
 
 double getLeftEncoderRotation();
 double getRightEncoderRotation();
+double getMiddleEncoderRotation();
 
-int getLFrontTemp();
-int getLBackTemp();
-int getRBackTemp();
-int getRFrontTemp();
+double getLeftEncoderVelocity();
+double getRightEncoderVelocity();
+double getMiddleEncoderVelocity();
+
+int getLeftFrontTemp();
+int getLeftMiddleTemp();
+int getLeftBackTemp();
+int getRightFrontTemp();
+int getRightMiddleTemp();
+int getRightBackTemp();
+
+double getLeftDiffernece();
+double getRightDifference();
 
 //control 
 void resetDrivetrain();

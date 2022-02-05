@@ -1,18 +1,10 @@
 #include "vex.h"
 
-bool mBackDriveLiftTransmissionState = false;
-bool MFrontLiftCylinderState = false;
-
 //thread for drivetrain to respond to joystick movements
 void drivetrainControl() {
   while (true) {
     //set speed based on inputs
     setDrivetrainSpeed(getLeftSpeedInLinear(), getRightSpeedInLinear());
-    if( getYPos()){
-      setMFrontLiftCylinder();
-    } else if (getRightPos()){
-      setMBackDriveLiftTranmission();
-    }
     
     wait(10, msec);
   }
@@ -22,62 +14,52 @@ void drivetrainControl() {
 
 //sets speed of drivetrain based on left and right velocity inputs
 void setDrivetrainSpeed(int leftSpeed, int rightSpeed) {
-  lFrontDrive.spin(fwd, leftSpeed, volt);
-  lMiddleDrive.spin(fwd, leftSpeed, volt);
-  rMiddleDrive.spin(fwd, rightSpeed, volt);
-  rFrontDrive.spin(fwd, rightSpeed, volt);
-  if(!mBackDriveLift.value() && lBackTransmission.value() && rBackTransmission.value()){
-    lBackDriveBackLift.spin(reverse, leftSpeed, volt);
-    rBackDriveCascadeLift.spin(reverse, rightSpeed, volt);
-    }
-}
-
-void setMBackDriveLiftTranmission(){
-    mBackDriveLiftTransmissionState ^= true; 
-    mBackDriveLift.set(mBackDriveLiftTransmissionState);
-    rBackDriveCascadeLift.stop();
-    lBackDriveBackLift.setBrake(coast);
-    wait(200, msec);
-}
-
-void setMFrontLiftCylinder(){
-    MFrontLiftCylinderState ^= true; 
-    mFrontLift.set(MFrontLiftCylinderState);
-    wait(200, msec);
+  leftFrontDrive.spin(fwd, leftSpeed, volt);
+  leftMiddleDrive.spin(fwd, leftSpeed, volt);
+  leftBackDrive.spin(fwd, rightSpeed, volt);
+  rightFrontDrive.spin(fwd, rightSpeed, volt);
+  rightMiddleDrive.spin(fwd, leftSpeed, volt);
+  rightBackDrive.spin(fwd, rightSpeed, volt);
 }
 
 void setDrivetrainCreep() {
-  lFrontDrive.setStopping(coast);
-  lMiddleDrive.setStopping(coast);
-  rMiddleDrive.setStopping(coast);
-  rFrontDrive.setStopping(coast);
-  lBackDriveBackLift.setStopping(coast);
-  rBackDriveCascadeLift.setStopping(coast);
+  leftFrontDrive.setStopping(coast);
+  leftMiddleDrive.setStopping(coast);
+  leftBackDrive.setStopping(coast);
+  rightFrontDrive.setStopping(coast);
+  rightMiddleDrive.setStopping(coast);
+  rightBackDrive.setStopping(coast);
 }
 void setDrivetrainLock() {
-  lFrontDrive.setStopping(brake);
-  lMiddleDrive.setStopping(brake);
-  rMiddleDrive.setStopping(brake);
-  rFrontDrive.setStopping(brake);
+  leftFrontDrive.setStopping(brake);
+  leftMiddleDrive.setStopping(brake);
+  leftBackDrive.setStopping(brake);
+  rightFrontDrive.setStopping(brake);
+  rightMiddleDrive.setStopping(brake);
+  rightBackDrive.setStopping(brake);
 }
 
 void setDrivetrainHold() {
-  lFrontDrive.setStopping(hold);
-  lMiddleDrive.setStopping(hold);
-  rMiddleDrive.setStopping(hold);
-  rFrontDrive.setStopping(hold);
+  leftFrontDrive.setStopping(hold);
+  leftMiddleDrive.setStopping(hold);
+  leftBackDrive.setStopping(hold);
+  rightFrontDrive.setStopping(hold);
+  rightMiddleDrive.setStopping(hold);
+  rightBackDrive.setStopping(hold);
 }
 
 // getters
 
 //gets movement speed based on joystick location and
 //converts to voltage evenly
-int getLeftSpeedInLinear() {
-  return (getAxis3Pos() - getAxis4Pos()) / voltageConverstion;
+double getLeftSpeedInLinear() {
+  double rawSpeed = (getAxis3Pos() - getAxis4Pos());
+  return (rawSpeed - getLeftDiffernece()/2)/voltageConverstion;
 }
 
-int getRightSpeedInLinear() {
-  return (getAxis3Pos() + getAxis4Pos()) / voltageConverstion;
+double getRightSpeedInLinear() {
+  double rawSpeed = (getAxis3Pos() + getAxis4Pos());
+  return (rawSpeed - getRightDifference()/2)/voltageConverstion;
 }
 
 //gets movement speed based on joystick location and 
@@ -109,44 +91,67 @@ int getRightSpeedInSlew() {
   return newVal;
 }
 
-int getlFrontDriveSpeed() {return lFrontDrive.velocity(pct);}
-int getlMiddleDriveSpeed() {return lMiddleDrive.velocity(pct);}
-int getrMiddleDriveSpeed() {return rMiddleDrive.velocity(pct);}
-int getrFrontDriveSpeed() {return rFrontDrive.velocity(pct);}
+int getLeftFrontVelocity() {return leftFrontDrive.velocity(rpm);}
+int getLeftMiddleVelocity() {return leftMiddleDrive.velocity(rpm);}
+int getLeftBackVelocity() {return leftBackDrive.velocity(rpm);}
+int getRightFrontVelocity() {return rightFrontDrive.velocity(rpm);}
+int getRightMiddleVelocity() {return rightMiddleDrive.velocity(rpm);}
+int getRightBackVelocity() {return rightBackDrive.velocity(rpm);}
 
-double getInertialRotation() { return mInertial.rotation();}
-double getInertialHeading() { return mInertial.heading();}
+double getInertialRotation() { return inert.rotation();}
+double getInertialHeading() { return inert.heading();}
 
-double getLeftEncoderRotation() { return -1 * lTraker.rotation(deg); }
-double getRightEncoderRotation() { return -1 * rTracker.rotation(deg); }
+double getLeftEncoderRotation() { return -1 * leftTracker.rotation(deg); }
+double getRightEncoderRotation() { return -1 * rightTracker.rotation(deg); }
+double getMiddleEncoderRotation() { return -1 * middleTracker.rotation(deg); }
 
-int getlFrontDriveTemp() {return lFrontDrive.temperature(celsius);}
-int getlMiddleDriveTemp() {return lMiddleDrive.temperature(celsius);}
-int getrMiddleDriveTemp() {return rMiddleDrive.temperature(celsius);}
-int getrFrontDriveTemp() {return rFrontDrive.temperature(celsius);}
+double getLeftEncoderVelocity() { return leftTracker.velocity(rpm); }
+double getRightEncoderVelocity() { return -1 * rightTracker.velocity(rpm); }
+double getMiddleEncoderVelocity() { return -1 * middleTracker.velocity(rpm); }
+
+int getLeftFrontTemp() {return leftFrontDrive.temperature(celsius);}
+int getLeftMiddleTemp() {return leftMiddleDrive.temperature(celsius);}
+int getLeftBackTemp() {return leftBackDrive.temperature(celsius);}
+int getRightFrontTemp() {return rightFrontDrive.temperature(celsius);}
+int getRightMiddleTemp() {return rightMiddleDrive.temperature(celsius);}
+int getRightBackTemp() {return rightBackDrive.temperature(celsius);}
+
+double getLeftDifference(){
+  double leftFrontDifference = getLeftFrontVelocity() - getLeftEncoderVelocity();
+  double leftMiddleDifference = getLeftMiddleVelocity() - getLeftEncoderVelocity();
+  double leftBackDifference = getLeftBackVelocity() - getLeftEncoderVelocity();
+  return std::max(leftFrontDifference, std::max(leftMiddleDifference, leftBackDifference));
+}
+
+double getRightDifference(){
+  double rightFrontDifference = getRightFrontVelocity() - getRightEncoderVelocity();
+  double rightMiddleDifference = getRightMiddleVelocity() - getRightEncoderVelocity();
+  double rightBackDifference = getRightBackVelocity() - getRightEncoderVelocity();
+  return std::max(rightFrontDifference, std::max(rightMiddleDifference, rightBackDifference));
+}
 
 // control
 
 //reset all Motors
 void resetDrivetrain() {
-  lFrontDrive.resetRotation();
-  lMiddleDrive.resetRotation();
-  rMiddleDrive.resetRotation();
-  rFrontDrive.resetRotation();
-  lBackDriveBackLift.resetRotation();
-  rBackDriveCascadeLift.resetRotation();
+  leftFrontDrive.resetRotation();
+  leftMiddleDrive.resetRotation();
+  leftBackDrive.resetRotation();
+  rightFrontDrive.resetRotation();
+  rightMiddleDrive.resetRotation();
+  rightBackDrive.resetRotation();
 }
 
 void resetEncoders() {
-  lTraker.resetRotation();
-  rTracker.resetRotation();
-  encoderH.resetRotation();
+  leftTracker.resetRotation();
+  rightTracker.resetRotation();
+  middleTracker.resetRotation();
 }
 
 //calibrate inertial sensor for preauton
 void calibrateInertial() {
-  mInertial.calibrate();
-  while(mInertial.isCalibrating()) {
+  inert.calibrate();
+  while(inert.isCalibrating()) {
     printf("ongoing \n");
     wait(100, msec);
   }
@@ -157,17 +162,23 @@ void calibrateInertial() {
 std::string tempInfoDrive() {
   std::string tempReturn;
   int loopCounter = 0;
-  if (getlFrontDriveTemp() > tempLimit)
+  if (getLeftBackTemp() > tempLimit){}
     tempReturn = "LF ";
     loopCounter++;
-  if (getlMiddleDriveTemp() > tempLimit)
-    tempReturn += "LR ";
+  if (getLeftMiddleTemp() > tempLimit)
+    tempReturn += "LM ";
     loopCounter++;
-  if (getrMiddleDriveTemp() > tempLimit)
-    tempReturn += "RB ";
+  if (getLeftBackTemp() > tempLimit)
+    tempReturn += "LB ";
     loopCounter++;
-  if (getrFrontDriveTemp() > tempLimit)
+  if (getRightFrontTemp() > tempLimit)
     tempReturn += "RF ";
+    loopCounter++;
+  if (getRightMiddleTemp() > tempLimit)
+    tempReturn += "RM ";
+    loopCounter++;
+  if (getRightBackTemp() > tempLimit)
+    tempReturn += "RB ";
     loopCounter++;
   if(loopCounter == 0)
     tempReturn = "All Good";
@@ -176,7 +187,7 @@ std::string tempInfoDrive() {
 
 
 // turn the robot based on absolute position from the original point of the robot
-void drivetrainTurn(double targetdeg) {
+/*void drivetrainTurn(double targetdeg) {
 
    // proportionality constants
   double kP = 0.45;
@@ -289,4 +300,4 @@ void arcturnTime (double left, double right, int length) {
   rFrontDrive.stop();
   lMiddleDrive.stop();
   rMiddleDrive.stop();
-}
+}*/

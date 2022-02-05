@@ -5,14 +5,12 @@ extern brain Brain;
 extern controller Controller;
 
 //main drive motors
-extern motor lFrontDrive;
-extern motor lMiddleDrive;
-extern motor rFrontDrive;
-extern motor rMiddleDrive;
-
-//transmission drive motors
-extern motor lBackDriveBackLift;
-extern motor rBackDriveCascadeLift;
+extern motor leftFrontDrive;
+extern motor leftMiddleDrive;
+extern motor rightFrontDrive;
+extern motor rightMiddleDrive;
+extern motor leftBackDrive;
+extern motor rightBackDrive;
 
 //intake/dr4b shared motor
 extern motor mFrontIntakeBackDlift;
@@ -21,12 +19,13 @@ extern motor mFrontIntakeBackDlift;
 extern motor mBackRotator;
 
 //sensors
-extern inertial mInertial;
+extern inertial inert;
 
 extern triport bExpander;
 
-extern encoder lTraker;
-extern encoder rTracker;
+extern encoder leftTracker;
+extern encoder rightTracker;
+extern encoder middleTracker;
 //extern encoder mTracker;
 extern encoder encoderH;
 

@@ -7,26 +7,25 @@ brain Brain;
 controller Controller = controller(primary);
 
 /* ENTER CORRECT PORTS FOR MOTORS*/
-motor lFrontDrive = motor(PORT2, ratio6_1, false);
-motor lMiddleDrive = motor(PORT9, ratio6_1, false);
+motor leftFrontDrive = motor(PORT2, ratio6_1, false);
+motor leftMiddleDrive = motor(PORT9, ratio6_1, false);
+motor leftBackDrive = motor(PORT19, ratio6_1, false);
 
-motor rFrontDrive = motor(PORT4, ratio6_1, true);
-motor rMiddleDrive = motor(PORT8, ratio6_1, true);
+motor rightFrontDrive = motor(PORT4, ratio6_1, true);
+motor rightMiddleDrive = motor(PORT8, ratio6_1, true);
+motor rightBackDrive = motor(PORT7, ratio6_1, true);
 
-motor lBackDriveBackLift = motor(PORT19, ratio6_1, false);
-motor rBackDriveCascadeLift = motor(PORT7, ratio6_1, true);
+motor fourBar = motor(PORT10, ratio36_1, true);
 
-motor mFrontIntakeBackDlift = motor(PORT10, ratio36_1, true);
+motor intake = motor(PORT8, ratio18_1, true);
 
-motor mBackRotator = motor(PORT8, ratio18_1, true);
-
-inertial mInertial = inertial(PORT5);
+inertial inert = inertial(PORT5);
 
 triport Expander = triport(PORT20);
 
-encoder lTraker = encoder(Expander.G);
-encoder rTracker = encoder(Expander.C);
-encoder encoderH = encoder(Brain.ThreeWirePort.B);
+encoder leftTracker = encoder(Expander.G);
+encoder rightTracker = encoder(Expander.C);
+encoder middleTracker = encoder(Brain.ThreeWirePort.B);
 
 limit lBackTransmission = limit(Expander.B);
 limit rBackTransmission = limit(Expander.A);
