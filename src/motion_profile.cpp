@@ -1,4 +1,4 @@
-#include "vex.h"
+/*#include "vex.h"
 
 struct Acceleration {
   double dist;
@@ -330,4 +330,4 @@ int driveProfileslow(int dist, bool fwd) { //encoder orientation flipped
   lBackDriveBackLift.stop();
   rBackDriveCascadeLift.stop();
   return 0;
-}
+}*/

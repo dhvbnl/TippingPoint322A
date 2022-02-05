@@ -4,15 +4,8 @@ const int bBondRearLift = 40;
 
 int liftControl();
 
-void setRearLiftSpeed(int speed);
-void setRearCascadeSpeed(int speed);
-void setFrontSixBarSpeed(int speed);
+void setFourBarSpeed(int speed);
 
-void setRearLiftBrake();
+int getFourBarSpeed();
 
-int getRearLiftSpeed();
-int getFrontSixBarSpeed();
-int getRearCascadeSpeed();
-
-int getlFrontDriveVoltage();
-int getBackLiftPot();
+int getFourBarPot();

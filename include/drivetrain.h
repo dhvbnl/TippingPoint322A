@@ -42,7 +42,7 @@ int getRightFrontTemp();
 int getRightMiddleTemp();
 int getRightBackTemp();
 
-double getLeftDiffernece();
+double getLeftDifference();
 double getRightDifference();
 
 //control 

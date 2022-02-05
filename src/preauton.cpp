@@ -4,7 +4,7 @@ void preauton() {
   //Controller.Screen.print("Preauton starting");
   vexcodeInit();
 
-  setMFrontLiftCylinder();
+  //setMFrontLiftCylinder();
   //reset all sensors
   resetDrivetrain();
   resetEncoders();

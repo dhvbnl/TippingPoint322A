@@ -1,4 +1,4 @@
-#include "vex.h"
+/*#include "vex.h"
 
 void test() { //(-2.3, 2.3)
   thread getPos(getPosition);
@@ -24,7 +24,7 @@ void redalliance() {
   driveProfile(27, false);
   drivetrainTurn(343);
   timeDrive(-7, 3000);
-  setMFrontLiftCylinder();
+  //setMFrontLiftCylinder();
   timeDrive(5, 1500);
   getPos.interrupt();
 }
@@ -48,7 +48,7 @@ void seesawGoal() {
 void farGoal() {
   thread getPos(getPosition);
   timeDrive(-4, 1000);
-  setMFrontLiftCylinder();
+  //setMFrontLiftCylinder();
   wait(100, msec);
   timeDrive(4, 1000);
   wait(100, msec);
@@ -59,8 +59,8 @@ void elims() {
   thread getPos(getPosition);
   timeDrive(-11, 860);
   wait(200, msec);
-  setMFrontLiftCylinder();
+  //setMFrontLiftCylinder();
   wait(200, msec);
   timeDrive(11, 900);
 
-}
+}*/

@@ -13,7 +13,7 @@ extern motor leftBackDrive;
 extern motor rightBackDrive;
 
 //intake/dr4b shared motor
-extern motor mFrontIntakeBackDlift;
+extern motor fourBar;
 
 //goal rotator
 extern motor mBackRotator;
@@ -35,6 +35,6 @@ extern limit rBackTransmission;
 extern digital_out mBackDriveLift;
 extern digital_out mFrontLift;
 
-extern pot lBackLift;
+extern pot fourBarPot;
 
 void vexcodeInit(void);

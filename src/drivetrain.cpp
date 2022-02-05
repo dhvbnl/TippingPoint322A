@@ -16,9 +16,9 @@ void drivetrainControl() {
 void setDrivetrainSpeed(int leftSpeed, int rightSpeed) {
   leftFrontDrive.spin(fwd, leftSpeed, volt);
   leftMiddleDrive.spin(fwd, leftSpeed, volt);
-  leftBackDrive.spin(fwd, rightSpeed, volt);
+  leftBackDrive.spin(fwd, leftSpeed, volt);
   rightFrontDrive.spin(fwd, rightSpeed, volt);
-  rightMiddleDrive.spin(fwd, leftSpeed, volt);
+  rightMiddleDrive.spin(fwd, rightSpeed, volt);
   rightBackDrive.spin(fwd, rightSpeed, volt);
 }
 
@@ -53,12 +53,12 @@ void setDrivetrainHold() {
 //gets movement speed based on joystick location and
 //converts to voltage evenly
 double getLeftSpeedInLinear() {
-  double rawSpeed = (getAxis3Pos() - getAxis4Pos());
-  return (rawSpeed - getLeftDiffernece()/2)/voltageConverstion;
+  double rawSpeed = (getAxis3Pos() + getAxis4Pos());
+  return (rawSpeed - getLeftDifference()/2)/voltageConverstion;
 }
 
 double getRightSpeedInLinear() {
-  double rawSpeed = (getAxis3Pos() + getAxis4Pos());
+  double rawSpeed = (getAxis3Pos() - getAxis4Pos());
   return (rawSpeed - getRightDifference()/2)/voltageConverstion;
 }
 
@@ -120,6 +120,7 @@ double getLeftDifference(){
   double leftFrontDifference = getLeftFrontVelocity() - getLeftEncoderVelocity();
   double leftMiddleDifference = getLeftMiddleVelocity() - getLeftEncoderVelocity();
   double leftBackDifference = getLeftBackVelocity() - getLeftEncoderVelocity();
+  return 0;
   return std::max(leftFrontDifference, std::max(leftMiddleDifference, leftBackDifference));
 }
 
@@ -127,6 +128,7 @@ double getRightDifference(){
   double rightFrontDifference = getRightFrontVelocity() - getRightEncoderVelocity();
   double rightMiddleDifference = getRightMiddleVelocity() - getRightEncoderVelocity();
   double rightBackDifference = getRightBackVelocity() - getRightEncoderVelocity();
+  return 0;
   return std::max(rightFrontDifference, std::max(rightMiddleDifference, rightBackDifference));
 }
 

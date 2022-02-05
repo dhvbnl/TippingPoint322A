@@ -7,7 +7,7 @@ void opcontrol()
 
   //start all control tasks
   thread driveMove(drivetrainControl);
-  task liftMove(liftControl);
+  thread liftMove(liftControl);
   
   while(true)
   {
