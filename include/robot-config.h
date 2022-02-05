@@ -23,17 +23,8 @@ extern inertial inert;
 
 extern triport bExpander;
 
-extern encoder leftTracker;
-extern encoder rightTracker;
-extern encoder middleTracker;
-//extern encoder mTracker;
-extern encoder encoderH;
-
-extern limit lBackTransmission;
-extern limit rBackTransmission;
-
-extern digital_out mBackDriveLift;
-extern digital_out mFrontLift;
+extern encoder verticalTracker;
+extern encoder horizontalTracker;
 
 extern pot fourBarPot;
 

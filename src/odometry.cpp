@@ -158,11 +158,11 @@ int getPosition()
   while (true)
   {
       // Reading the odometry encoders
-      currentLeft = getLeftEncoderRotation() * convertInches; 
-      currentRight = getRightEncoderRotation() * convertInches; 
+      //currentLeft = getLeftEncoderRotation() * convertInches; 
+      //currentRight = getRightEncoderRotation() * convertInches; 
       deltaL = currentLeft - previousLeft;
       deltaR = currentRight - previousRight;
-      currentH = encoderH.rotation(deg) * convertInches;
+      //currentH = encoderH.rotation(deg) * convertInches;
       coor.deltaH = currentH - previousH;
 
       thetaEncoderRad = atan((deltaR - deltaL)/trackWidth); // calculated change in heading 

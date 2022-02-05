@@ -23,18 +23,10 @@ inertial inert = inertial(PORT9);
 
 triport Expander = triport(PORT11);
 
-encoder leftTracker = encoder(Expander.G);
-encoder rightTracker = encoder(Expander.C);
-encoder middleTracker = encoder(Brain.ThreeWirePort.B);
+encoder verticalTracker = encoder(Expander.A);
+encoder horizontalTracker = encoder(Expander.D);
 
-
-limit lBackTransmission = limit(Expander.B);
-limit rBackTransmission = limit(Expander.A);
-
-digital_out mBackDriveLift = digital_out(Expander.E);
-digital_out mFrontLift = digital_out(Brain.ThreeWirePort.A);
-
-pot fourBarPot = pot(Expander.E);
+pot fourBarPot = pot(Expander.C);
 
 void vexcodeInit(void) {
   

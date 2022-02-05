@@ -5,9 +5,13 @@ const int powerRatioB = 1;
 //complete functions
 void drivetrainControl();
 
+void startBalance();
+
 //setters
 void setDrivetrainSpeed(int leftSpeed, int rightSpeed);
 
+
+void setDrivetrainStopping();
 void setDrivetrainCreep();
 void setDrivetrainLock();
 void setDrivetrainHold();
@@ -19,21 +23,22 @@ double getRightSpeedInLinear();
 int getLeftSpeedInSlew();
 int getRightSpeedInSlew();
 
-int getLFrontSpeed();
-int getLBackSpeed();
-int getRBackSpeed();
-int getRFrontSpeed();
+int getLeftFrontVelocity();
+int getLeftMiddleVelocity();
+int getLeftBackVelocity();
+int getRightFrontVelocity();
+int getRightMiddleVelocity();
+int getRightBackVelocity();
 
 double getInertialRotation();
 double getInertialHeading();
+double getInertialPitch();
 
-double getLeftEncoderRotation();
-double getRightEncoderRotation();
-double getMiddleEncoderRotation();
+double getVerticalEncoderRotation();
+double getHorizontalEncoderRotation();
 
-double getLeftEncoderVelocity();
-double getRightEncoderVelocity();
-double getMiddleEncoderVelocity();
+double getVerticalEncoderVelocity();
+double getHorizontalEncoderVelocity();
 
 int getLeftFrontTemp();
 int getLeftMiddleTemp();
@@ -41,9 +46,6 @@ int getLeftBackTemp();
 int getRightFrontTemp();
 int getRightMiddleTemp();
 int getRightBackTemp();
-
-double getLeftDifference();
-double getRightDifference();
 
 //control 
 void resetDrivetrain();

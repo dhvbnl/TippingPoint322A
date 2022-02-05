@@ -1,12 +1,37 @@
 #include "vex.h"
 
+int stopTimer = 0;
+
 //thread for drivetrain to respond to joystick movements
 void drivetrainControl() {
   while (true) {
     //set speed based on inputs
     setDrivetrainSpeed(getLeftSpeedInLinear(), getRightSpeedInLinear());
-    
+    setDrivetrainStopping();
+    stopTimer++;
+    startBalance();
+    Controller.Screen.clearLine();
+    Controller.Screen.print(getVerticalEncoderRotation());
     wait(10, msec);
+  }
+}
+
+//EXPERIMENTAL
+void startBalance(){
+  double pitch = getInertialPitch();
+  if(pitch > 22 && getBPos()){
+    while(pitch > 22){
+      int speed = pitch / 5;
+      setDrivetrainSpeed(speed, speed);
+      pitch = getInertialPitch();
+      wait(10, msec);
+    }
+    while(pitch > 3){
+      int speed = pitch / 10;
+      setDrivetrainSpeed(speed, speed);
+      pitch = getInertialPitch();
+      wait(10, msec);
+    }
   }
 }
 
@@ -20,6 +45,16 @@ void setDrivetrainSpeed(int leftSpeed, int rightSpeed) {
   rightFrontDrive.spin(fwd, rightSpeed, volt);
   rightMiddleDrive.spin(fwd, rightSpeed, volt);
   rightBackDrive.spin(fwd, rightSpeed, volt);
+}
+
+void setDrivetrainStopping(){
+  if(stopTimer > 100 && (abs(getLeftMiddleVelocity()) > 0 || abs(getRightBackVelocity()) > 0)){
+    setDrivetrainLock();
+    if(getAxis3Pos() != 0)
+      stopTimer = 0;
+  } else{
+    setDrivetrainCreep();
+  }
 }
 
 void setDrivetrainCreep() {
@@ -54,12 +89,12 @@ void setDrivetrainHold() {
 //converts to voltage evenly
 double getLeftSpeedInLinear() {
   double rawSpeed = (getAxis3Pos() + getAxis4Pos());
-  return (rawSpeed - getLeftDifference()/2)/voltageConverstion;
+  return rawSpeed/voltageConverstion;
 }
 
 double getRightSpeedInLinear() {
   double rawSpeed = (getAxis3Pos() - getAxis4Pos());
-  return (rawSpeed - getRightDifference()/2)/voltageConverstion;
+  return rawSpeed/voltageConverstion;
 }
 
 //gets movement speed based on joystick location and 
@@ -100,14 +135,13 @@ int getRightBackVelocity() {return rightBackDrive.velocity(rpm);}
 
 double getInertialRotation() { return inert.rotation();}
 double getInertialHeading() { return inert.heading();}
+double getInertialPitch() {return inert.pitch();}
 
-double getLeftEncoderRotation() { return -1 * leftTracker.rotation(deg); }
-double getRightEncoderRotation() { return -1 * rightTracker.rotation(deg); }
-double getMiddleEncoderRotation() { return -1 * middleTracker.rotation(deg); }
+double getVerticalEncoderRotation() { return -1 * verticalTracker.rotation(deg); }
+double getHorizontalEncoderRotation() { return -1 * horizontalTracker.rotation(deg); }
 
-double getLeftEncoderVelocity() { return leftTracker.velocity(rpm); }
-double getRightEncoderVelocity() { return -1 * rightTracker.velocity(rpm); }
-double getMiddleEncoderVelocity() { return -1 * middleTracker.velocity(rpm); }
+double getVerticalEncoderVelocity() { return verticalTracker.velocity(rpm); }
+double getHorizontalEncoderVelocity() { return -1 * horizontalTracker.velocity(rpm); }
 
 int getLeftFrontTemp() {return leftFrontDrive.temperature(celsius);}
 int getLeftMiddleTemp() {return leftMiddleDrive.temperature(celsius);}
@@ -115,22 +149,6 @@ int getLeftBackTemp() {return leftBackDrive.temperature(celsius);}
 int getRightFrontTemp() {return rightFrontDrive.temperature(celsius);}
 int getRightMiddleTemp() {return rightMiddleDrive.temperature(celsius);}
 int getRightBackTemp() {return rightBackDrive.temperature(celsius);}
-
-double getLeftDifference(){
-  double leftFrontDifference = getLeftFrontVelocity() - getLeftEncoderVelocity();
-  double leftMiddleDifference = getLeftMiddleVelocity() - getLeftEncoderVelocity();
-  double leftBackDifference = getLeftBackVelocity() - getLeftEncoderVelocity();
-  return 0;
-  return std::max(leftFrontDifference, std::max(leftMiddleDifference, leftBackDifference));
-}
-
-double getRightDifference(){
-  double rightFrontDifference = getRightFrontVelocity() - getRightEncoderVelocity();
-  double rightMiddleDifference = getRightMiddleVelocity() - getRightEncoderVelocity();
-  double rightBackDifference = getRightBackVelocity() - getRightEncoderVelocity();
-  return 0;
-  return std::max(rightFrontDifference, std::max(rightMiddleDifference, rightBackDifference));
-}
 
 // control
 
@@ -145,9 +163,8 @@ void resetDrivetrain() {
 }
 
 void resetEncoders() {
-  leftTracker.resetRotation();
-  rightTracker.resetRotation();
-  middleTracker.resetRotation();
+  verticalTracker.resetRotation();
+  horizontalTracker.resetRotation();
 }
 
 //calibrate inertial sensor for preauton
