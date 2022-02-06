@@ -61,7 +61,7 @@ Button autonButtons[] = {
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0: // code
+  case 0: hi();
     break;
   case 1: // code
     break;
@@ -98,8 +98,6 @@ int main() {
             autonButtons[autonToRun].render();
             autonButtons[i].render();
             autonToRun = i;
-            Controller.Screen.clearLine();
-            Controller.Screen.print(autonToRun);
           }
         }
         wait(100, msec);

@@ -14,8 +14,8 @@ struct Coordinate {
 
 void horizontalmove() {
   double refAngle;
-  int dir = 0;
   double headingDeg = coor.headingRad * (180 / M_PI);
+  int dir = 0;
 
   if (headingDeg < 90) { // Quad 1
     refAngle  = headingDeg;
@@ -41,7 +41,7 @@ void horizontalmove() {
     if (dir % 2 == 1) { // Quads 1 or 3
       coor.xPos += deltaX;
       coor.yPos -= deltaY;
-    } else { // Quads 2 or 4
+    } else { // Quads  2 or 4
       coor.xPos += deltaX;
       coor.yPos += deltaY;
     }
@@ -130,80 +130,72 @@ int setPos (double x, double y, bool repeat) {
   return 0;
 } 
 
-int getPosition()
+int getPos()
 {
-  double currentLeft = 0.0;
-  double currentRight = 0.0;
+  double currentEn = 0.0;
   double currentH = 0.0; 
-  double previousLeft = 0.0;
-  double previousRight = 0.0;
+  double previousEn = 0.0;
   double previousH = 0.0;
-  double deltaL = 0.0;
-  double deltaR = 0.0;
+  double deltaEn = 0.0;
   double deltaX = 0.0;
   double deltaY = 0.0;
-  double thetaEncoderRad = 0.0;
-  double thetaInertialRad = 0.0;
+  double deltaHeading = 0.0;
   double lRadius = 0.0;
   double prevHeadRad = 0.0;
 
   coor.headingRad = 0.0;
   coor.deltaH = 0.0;
   coor.linearDistance = 0.0;
-  //double errorX = getLeftEncoderRotation() * convertInches;
-  //double errorY = getLeftEncoderRotation() * convertInches;
   coor.xPos = 0.0;
   coor.yPos = 0.0;
 
   while (true)
   {
       // Reading the odometry encoders
-      //currentLeft = getLeftEncoderRotation() * convertInches; 
-      //currentRight = getRightEncoderRotation() * convertInches; 
-      deltaL = currentLeft - previousLeft;
-      deltaR = currentRight - previousRight;
-      //currentH = encoderH.rotation(deg) * convertInches;
+      currentEn = getVerticalEncoderRotation() * convertInches; 
+      currentH = getHorizontalEncoderRotation() * convertInches;
+      
+      deltaEn = currentEn - previousEn;
       coor.deltaH = currentH - previousH;
 
-      thetaEncoderRad = atan((deltaR - deltaL)/trackWidth); // calculated change in heading 
-
-      // Sensor-based heading reading
+      // Sensor-based heading reading in radians
       coor.headingRad = getInertialHeading() * (M_PI / 180);
 
       // Convert head from clockwise angle to counterclockwise (unit circle-based) angle
       coor.headingRad = fmod(((2.5 * M_PI) - coor.headingRad), (2 * M_PI)); 
     
-      thetaInertialRad = coor.headingRad - prevHeadRad; // change in heading using inertial
-      coor.thetaRad = thetaInertialRad;
-  
+      deltaHeading = coor.headingRad - prevHeadRad; // change in heading using inertial sensor readings
 
       // Calculate the incremental linear distance traveled.
-      if (fabs(coor.thetaRad) < 0.01)
+      if (fabs(deltaHeading) < 0.01)
       {
-          coor.linearDistance = (deltaL + deltaR) / 2.0;
+          coor.linearDistance = deltaEn;
       }
       else
       {
-          lRadius = deltaL / coor.thetaRad; 
-          coor.linearDistance = 2.0 * (lRadius + (trackWidth / 2.0)) * sin(coor.thetaRad / 2.0);
+          lRadius = deltaEn / deltaHeading; 
+          coor.linearDistance = 2.0 * lRadius * sin(deltaHeading / 2.0);
       }
 
       // Calculate the incremental 2-dimensional coordinates x & y
-      deltaX = coor.linearDistance * cos(coor.headingRad + (coor.thetaRad / 2.0));
-      deltaY = coor.linearDistance * sin(coor.headingRad + (coor.thetaRad / 2.0));
+      deltaX = coor.linearDistance * cos(coor.headingRad + (deltaHeading / 2.0));
+      deltaY = coor.linearDistance * sin(coor.headingRad + (deltaHeading / 2.0));
 
       coor.xPos += deltaX; 
       coor.yPos += deltaY;
       printPos();
 
-      //encoderH.changed(horizontalmove);
+      horizontalTracker.changed(*horizontalmove);
+      wait(10, msec);
       /* if (fabs(coor.deltaH) > 0.01) {
         horizontalmove();
       } */
-      previousLeft = currentLeft;
-      previousRight = currentRight;
+      previousEn = currentEn;
       prevHeadRad = coor.headingRad;
       previousH = currentH;
+
+      printf("x: %f", coor.xPos);
+      printf("y: %f\n", coor.yPos);
 
       wait(10, msec); 
       Brain.Screen.clearLine();
@@ -213,8 +205,11 @@ int getPosition()
 }
 
 void hi() {
-  printf("hi");
-  thread track(getPosition);
+  horizontalTracker.resetRotation();
+  horizontalTracker.setRotation(0, deg);
+  while (true) {
+    printf("encoder h: %f\n", getHorizontalEncoderRotation());
+  }
 } 
 
 void printPos() {

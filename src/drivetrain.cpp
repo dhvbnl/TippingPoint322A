@@ -10,8 +10,6 @@ void drivetrainControl() {
     setDrivetrainStopping();
     stopTimer++;
     startBalance();
-    Controller.Screen.clearLine();
-    Controller.Screen.print(getVerticalEncoderRotation());
     wait(10, msec);
   }
 }
