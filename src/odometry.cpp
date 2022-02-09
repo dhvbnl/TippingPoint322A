@@ -14,7 +14,7 @@ struct Coordinate {
 
 void horizontalmove() {
   double refAngle;
-  double headingDeg = coor.headingRad * (180 / M_PI);
+  double headingDeg = (coor.headingRad) * (180 / M_PI);
   int dir = 0;
 
   if (headingDeg < 90) { // Quad 1
@@ -33,28 +33,52 @@ void horizontalmove() {
     refAngle = 360 - headingDeg; // Quad 2
     dir = 4;
   }
+  
+  double deltaX = cos(refAngle * M_PI / 180) * fabs(coor.deltaH);
+  double deltaY = sin(refAngle * M_PI / 180) * fabs(coor.deltaH); 
 
-  double deltaX = cos(refAngle * 180 / M_PI) * fabs(coor.deltaH);
-  double deltaY = sin(refAngle * 180 / M_PI) * fabs(coor.deltaH); 
-
-  if (coor.deltaH > 0) { // moving right (positive direction)
-    if (dir % 2 == 1) { // Quads 1 or 3
+  //if (coor.deltaH > 0) { // moving right (positive direction)
+  if (getHorizontalEncoderRotation() > 0) 
+  {
+    if (dir == 1) { 
       coor.xPos += deltaX;
       coor.yPos -= deltaY;
-    } else { // Quads  2 or 4
+    } 
+    else if (dir == 2) { 
+      coor.xPos -= deltaX;
+      coor.yPos -= deltaY;
+    } 
+    else if (dir == 3) {
+      coor.xPos -= deltaX;
+      coor.yPos += deltaY;
+    } 
+    else {
       coor.xPos += deltaX;
       coor.yPos += deltaY;
     }
   } 
-  else { // moving left (negative direction)
-    if (dir % 2 == 1) {
+  else 
+  { // moving left (negative direction)
+    if (dir == 1) {
       coor.xPos -= deltaX;
       coor.yPos += deltaY;
-    } else {
+    } 
+    else if (dir == 2) {
+      coor.xPos += deltaX;
+      coor.yPos += deltaY;
+    } 
+    else if (dir == 3) {
+      coor.xPos += deltaX;
+      coor.yPos -= deltaY;
+    } 
+    else {
       coor.xPos -= deltaX;
       coor.yPos -= deltaY;
     }
   }
+  printf("x: %f\n", deltaX);
+  printf("y: %f\n", deltaY);
+  wait(100, msec);
 }
 
 double getxPos() {
@@ -183,8 +207,9 @@ int getPos()
 
       coor.xPos += deltaX; 
       coor.yPos += deltaY;
-      printPos();
+      //printPos();
 
+      //printf("delta h: %f\n", coor.deltaH);
       horizontalTracker.changed(*horizontalmove);
       wait(10, msec);
       /* if (fabs(coor.deltaH) > 0.01) {
@@ -194,10 +219,12 @@ int getPos()
       prevHeadRad = coor.headingRad;
       previousH = currentH;
 
-      printf("x: %f", coor.xPos);
-      printf("y: %f\n", coor.yPos);
+      printf("heading deg: %f", coor.headingRad * (180 / M_PI));
+      //printf("x: %f", coor.xPos);
+      //printf("y: %f\n", coor.yPos);
+      //printf("%f\n", coor.headingRad);
 
-      wait(10, msec); 
+      wait(100, msec); 
       Brain.Screen.clearLine();
     }
 

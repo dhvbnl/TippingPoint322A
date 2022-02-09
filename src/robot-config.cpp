@@ -24,9 +24,11 @@ inertial inert = inertial(PORT9);
 triport Expander = triport(PORT11);
 
 encoder verticalTracker = encoder(Expander.A);
-encoder horizontalTracker = encoder(Expander.D);
+encoder horizontalTracker = encoder(Expander.E);
 
-pot fourBarPot = pot(Expander.C);
+digital_out rearClamp = digital_out(Expander.C);
+
+pot fourBarPot = pot(Expander.D);
 
 void vexcodeInit(void) {
   

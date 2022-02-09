@@ -51,6 +51,7 @@ int getRightBackTemp();
 void resetDrivetrain();
 void resetEncoders();
 void calibrateInertial();
+void waitCalibrate();
 void drivetrainTurn(double targetdeg);
 void timeDrive(double speed, int timeLength);
 void arcturn (double left, double right, double turnangle);

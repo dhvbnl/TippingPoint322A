@@ -1,10 +1,11 @@
 #include "vex.h"
 
 void preauton() {
-  //Controller.Screen.print("Preauton starting");
   vexcodeInit();
+  //set cylinder postion
+  rearClamp.set(1);
+  wait(100, msec);
 
-  //setMFrontLiftCylinder();
   //reset all sensors
   resetDrivetrain();
   resetEncoders();
@@ -15,7 +16,7 @@ void preauton() {
   //calibrate inertial sensor
   calibrateInertial();
   Controller.Screen.print("Preauton Complete");
-  Brain.Screen.print("Preauton complete :)");
+ // thread controllerScreen(screenGUI);
 }
 
 

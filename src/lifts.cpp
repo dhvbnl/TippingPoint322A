@@ -1,15 +1,28 @@
 #include "vex.h"
 
+int pnumaticDelay = 0;
+
 int liftControl() {
 
   while (true) {
     setFourBarSpeed(getFourBarSpeed());
+    setRearClamp();
     wait(10, msec);
   }
 }
 
 void setFourBarSpeed(int speed) {
   fourBar.spin(fwd, speed / voltageConverstion, volt);
+}
+
+void setRearClamp(){
+  if(getRightPos() && pnumaticDelay > 20){
+    rearClamp.set(!rearClamp.value());
+    pnumaticDelay = 0; 
+  } else{
+    pnumaticDelay++;   
+  }
+
 }
 
 int getFourBarSpeed() {

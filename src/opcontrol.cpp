@@ -8,9 +8,10 @@ void opcontrol()
   //start all control tasks
   thread driveMove(drivetrainControl);
   thread liftMove(liftControl);
+  //thread controllerScreen(screenGUI);
   
   while(true)
   {
-    wait(100, msec);
+    wait(10, msec);
   }
 }

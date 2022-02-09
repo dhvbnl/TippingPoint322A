@@ -5,6 +5,7 @@ const int bBondRearLift = 40;
 int liftControl();
 
 void setFourBarSpeed(int speed);
+void setRearClamp();
 
 int getFourBarSpeed();
 

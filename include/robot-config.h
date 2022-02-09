@@ -26,6 +26,8 @@ extern triport bExpander;
 extern encoder verticalTracker;
 extern encoder horizontalTracker;
 
+extern digital_out rearClamp;
+
 extern pot fourBarPot;
 
 void vexcodeInit(void);

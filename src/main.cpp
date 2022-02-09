@@ -61,7 +61,7 @@ Button autonButtons[] = {
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0: hi();
+  case 0: getPos();
     break;
   case 1: // code
     break;
@@ -83,7 +83,7 @@ void autonomous(void) {
 int main() {
   Competition.autonomous(autonomous);
   Competition.drivercontrol(opcontrol);
-  // preauton();
+  preauton();
 
   while (true) {
     if (!Competition.isEnabled()) {

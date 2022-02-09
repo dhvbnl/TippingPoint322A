@@ -169,17 +169,21 @@ void resetEncoders() {
 void calibrateInertial() {
   inert.calibrate();
   while(inert.isCalibrating()) {
-    printf("ongoing \n");
     wait(100, msec);
   }
-  printf("done\n");
+}
+
+void waitCalibrate(){
+  while(inert.isCalibrating()) {
+    wait(100, msec);
+  }
 }
 
 //checks tempeatures of all drive motors are returns in a string which motors are hot
 std::string tempInfoDrive() {
   std::string tempReturn;
   int loopCounter = 0;
-  if (getLeftBackTemp() > tempLimit){}
+  if (getLeftBackTemp() > tempLimit)
     tempReturn = "LF ";
     loopCounter++;
   if (getLeftMiddleTemp() > tempLimit)

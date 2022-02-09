@@ -17,6 +17,8 @@
 #include "preauton.h"
 #include "mapping.h"
 
+using std::string;
+
 //global var
 //distance between tracking wheels
 const double trackWidth = 4.625;
