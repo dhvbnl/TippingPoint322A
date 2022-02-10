@@ -10,14 +10,34 @@ struct Coordinate {
   double thetaRad;
   double linearDistance; 
   double headingRad;
+  double clockwiseHeadRad;
+  double deltaHeading;
 } coor; 
 
 void horizontalmove() {
   double refAngle;
-  double headingDeg = (coor.headingRad) * (180 / M_PI);
+  double headingDeg = (coor.clockwiseHeadRad) * (180 / M_PI);
   int dir = 0;
+  double radius; double linearDistance;
+      
+      // Calculate the incremental linear distance traveled.
+    if (fabs(coor.deltaHeading) < 0.01)
+    {
+        linearDistance = coor.deltaH;
+    }
+    else
+    {
+        radius = coor.deltaH / coor.deltaHeading; 
+        linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
+    }
 
-  if (headingDeg < 90) { // Quad 1
+    // Calculate the incremental 2-dimensional coordinates x & y
+    double deltaX = linearDistance * cos(M_PI / 2 + coor.headingRad + (coor.deltaHeading / 2.0));
+    double deltaY = linearDistance * sin(M_PI / 2 + coor.headingRad + (coor.deltaHeading / 2.0));
+    coor.xPos +=deltaX;
+    coor.yPos += deltaY;
+
+  /* if (headingDeg < 90) { // Quad 1
     refAngle  = headingDeg;
     dir = 1;
   } 
@@ -75,9 +95,9 @@ void horizontalmove() {
       coor.xPos -= deltaX;
       coor.yPos -= deltaY;
     }
-  }
-  printf("x: %f\n", deltaX);
-  printf("y: %f\n", deltaY);
+  } */
+  //printf("x: %f\n", deltaX);
+  //printf("y: %f\n", deltaY);
   wait(100, msec);
 }
 
@@ -163,10 +183,11 @@ int getPos()
   double deltaEn = 0.0;
   double deltaX = 0.0;
   double deltaY = 0.0;
-  double deltaHeading = 0.0;
-  double lRadius = 0.0;
+  double radius = 0.0;
   double prevHeadRad = 0.0;
 
+  coor.deltaHeading = 0.0;
+  coor.clockwiseHeadRad = 0.0; // heading by clockwise angle
   coor.headingRad = 0.0;
   coor.deltaH = 0.0;
   coor.linearDistance = 0.0;
@@ -184,26 +205,28 @@ int getPos()
 
       // Sensor-based heading reading in radians
       coor.headingRad = getInertialHeading() * (M_PI / 180);
+      
+      coor.clockwiseHeadRad = coor.headingRad;
 
       // Convert head from clockwise angle to counterclockwise (unit circle-based) angle
       coor.headingRad = fmod(((2.5 * M_PI) - coor.headingRad), (2 * M_PI)); 
     
-      deltaHeading = coor.headingRad - prevHeadRad; // change in heading using inertial sensor readings
+      coor.deltaHeading = coor.headingRad - prevHeadRad; // change in heading using inertial sensor readings
 
       // Calculate the incremental linear distance traveled.
-      if (fabs(deltaHeading) < 0.01)
+      if (fabs(coor.deltaHeading) < 0.01)
       {
           coor.linearDistance = deltaEn;
       }
       else
       {
-          lRadius = deltaEn / deltaHeading; 
-          coor.linearDistance = 2.0 * lRadius * sin(deltaHeading / 2.0);
+          radius = deltaEn / coor.deltaHeading; 
+          coor.linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
       }
 
       // Calculate the incremental 2-dimensional coordinates x & y
-      deltaX = coor.linearDistance * cos(coor.headingRad + (deltaHeading / 2.0));
-      deltaY = coor.linearDistance * sin(coor.headingRad + (deltaHeading / 2.0));
+      deltaX = coor.linearDistance * cos(coor.headingRad + (coor.deltaHeading / 2.0));
+      deltaY = coor.linearDistance * sin(coor.headingRad + (coor.deltaHeading / 2.0));
 
       coor.xPos += deltaX; 
       coor.yPos += deltaY;
@@ -211,7 +234,7 @@ int getPos()
 
       //printf("delta h: %f\n", coor.deltaH);
       horizontalTracker.changed(*horizontalmove);
-      wait(10, msec);
+      wait(100, msec);
       /* if (fabs(coor.deltaH) > 0.01) {
         horizontalmove();
       } */
@@ -219,9 +242,9 @@ int getPos()
       prevHeadRad = coor.headingRad;
       previousH = currentH;
 
-      printf("heading deg: %f", coor.headingRad * (180 / M_PI));
-      //printf("x: %f", coor.xPos);
-      //printf("y: %f\n", coor.yPos);
+      //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
+      printf("x: %f", coor.xPos);
+      printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
