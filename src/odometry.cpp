@@ -2,6 +2,8 @@
 
 // Global constants
 const double errorMargin = 0.01;
+const double V_trackWidth = 2.25;
+const double H_trackWidth = 2.60;
 
 struct Coordinate {
   double xPos;
@@ -15,7 +17,7 @@ struct Coordinate {
 } coor; 
 
 void horizontalmove() {
-  double refAngle;
+  //double refAngle;
   double headingDeg = (coor.clockwiseHeadRad) * (180 / M_PI);
   int dir = 0;
   double radius; double linearDistance;
@@ -27,13 +29,13 @@ void horizontalmove() {
     }
     else
     {
-        radius = coor.deltaH / coor.deltaHeading; 
+        radius = (coor.deltaH / coor.deltaHeading); 
         linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
     }
 
     // Calculate the incremental 2-dimensional coordinates x & y
-    double deltaX = linearDistance * cos(M_PI / 2 + coor.headingRad + (coor.deltaHeading / 2.0));
-    double deltaY = linearDistance * sin(M_PI / 2 + coor.headingRad + (coor.deltaHeading / 2.0));
+    double deltaX = linearDistance * cos(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
+    double deltaY = linearDistance * sin(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
     coor.xPos +=deltaX;
     coor.yPos += deltaY;
 
@@ -220,7 +222,7 @@ int getPos()
       }
       else
       {
-          radius = deltaEn / coor.deltaHeading; 
+          radius = (deltaEn / coor.deltaHeading); 
           coor.linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
       }
 
@@ -233,7 +235,7 @@ int getPos()
       //printPos();
 
       //printf("delta h: %f\n", coor.deltaH);
-      horizontalTracker.changed(*horizontalmove);
+      horizontalmove();
       wait(100, msec);
       /* if (fabs(coor.deltaH) > 0.01) {
         horizontalmove();
