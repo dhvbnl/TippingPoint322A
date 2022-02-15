@@ -1,4 +1,3 @@
-
 #include "vex.h"
 
 struct Acceleration {

@@ -15,6 +15,9 @@ extern motor rightBackDrive;
 //intake/dr4b shared motor
 extern motor fourBar;
 
+//intake 
+extern motor intake;
+
 //goal rotator
 extern motor mBackRotator;
 
@@ -27,6 +30,7 @@ extern encoder verticalTracker;
 extern encoder horizontalTracker;
 
 extern digital_out rearClamp;
+extern digital_out frontClamp;
 
 extern pot fourBarPot;
 

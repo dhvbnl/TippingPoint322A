@@ -32,7 +32,6 @@ const double voltageConverstion = 100/12;
 const double convertInches = (2.75 * M_PI) / 360;
 const double convertDegrees = 360 / (2.75 * M_PI);
 
-
 #define waitUntil(condition)                                                   \
   do {                                                                         \
     wait(5, msec);                                                             \

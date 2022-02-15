@@ -207,118 +207,50 @@ std::string tempInfoDrive() {
 }
 
 
-// turn the robot based on absolute position from the original point of the robot
-/*void drivetrainTurn(double targetdeg) {
-
-   // proportionality constants
-  double kP = 0.45;
-  double kI = 0.0001;
-  double kD = 0.01;
-
-  // PID loop variables
-  double error = 1;
-  double integral = 0;
-  double derivative = 0;
-  double prevError = 0;
-  double motorPower = 0;
-  bool useright = true;
-  while (fabs(targetdeg - getInertialHeading()) > 2) {
-    // PID loop to determine motorPower at any given point in time
-    double head = getInertialHeading();
-    double errorright = targetdeg - head;
-    if (targetdeg < head) {
-      errorright = 360 - head + targetdeg;
-    }
-    double errorleft = fabs(targetdeg - head);
-    if (targetdeg > head) {
-      errorleft = 360 + head - targetdeg;
-    }
-    if (errorright < errorleft) {
-      error = errorright;
-      useright = true;
-    } else {
-      error = errorleft;
-      useright = false;
-    }
-    // pid stuff
-    integral = integral + error;
-    if (error == 0 or error > targetdeg) {
-      integral = 0;
-    }
-    derivative = error - prevError;
-    motorPower = (error * kP + integral * kI + derivative * kD);
-    prevError = error;
-
-    wait(15, msec);
-
-    // powering the motors
-    if (useright) {
-      lFrontDrive.spin(fwd, -motorPower, pct);
-      lMiddleDrive.spin(fwd, -motorPower, pct);
-      lBackDriveBackLift.spin(fwd, motorPower, pct);
-      rMiddleDrive.spin(fwd, motorPower, pct);
-      rFrontDrive.spin(fwd, motorPower, pct);
-      rBackDriveCascadeLift.spin(fwd, -motorPower, pct);
-    } else {
-      lFrontDrive.spin(fwd, motorPower, pct);
-      lMiddleDrive.spin(fwd, motorPower, pct);
-      lBackDriveBackLift.spin(fwd, -motorPower, pct);
-      rMiddleDrive.spin(fwd, -motorPower, pct);
-      rFrontDrive.spin(fwd, -motorPower, pct);
-      rBackDriveCascadeLift.spin(fwd, motorPower, pct);
-    }
-  }
-  lMiddleDrive.stop();
-  rMiddleDrive.stop();
-  lFrontDrive.stop();
-  rFrontDrive.stop();
-  rBackDriveCascadeLift.stop();
-  lBackDriveBackLift.stop();
-
-}
+/*
 
 //drive movement based on time
 void timeDrive(double speed, int timeLength) {
-  lFrontDrive.spin(fwd, speed, volt);
-  rFrontDrive.spin(fwd, speed, volt);
-  lMiddleDrive.spin(fwd, speed, volt);
-  rMiddleDrive.spin(fwd, speed, volt);
-  lBackDriveBackLift.spin(fwd, -speed, volt);
-  rBackDriveCascadeLift.spin(fwd, -speed, volt);
+  leftFrontDrive.spin(fwd, speed, volt);
+  rightFrontDrive.spin(fwd, speed, volt);
+  leftMiddleDrive.spin(fwd, speed, volt);
+  rightMiddleDrive.spin(fwd, speed, volt);
+  leftBackDrive.spin(fwd, -speed, volt);
+  rightBackDrive.spin(fwd, -speed, volt);
 
   wait(timeLength, msec);
 
-  lFrontDrive.stop();
-  rFrontDrive.stop();
-  lMiddleDrive.stop();
-  rMiddleDrive.stop();
-  lBackDriveBackLift.stop();
-  rBackDriveCascadeLift.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftBackDrive.stop();
+  rightBackDrive.stop();
 }
 
 //turn based on different left and right speed to move in a curve
 void arcturn (double left, double right, double turnangle) {
   while (getInertialHeading() < turnangle - 2 || getInertialHeading() > turnangle + 2) {
-    lFrontDrive.spin(fwd, left, volt);
-    lMiddleDrive.spin(fwd, left, volt);
-    rFrontDrive.spin(fwd, right, volt);
-    rMiddleDrive.spin(fwd, right, volt);
+    leftFrontDrive.spin(fwd, left, volt);
+    leftMiddleDrive.spin(fwd, left, volt);
+    rightFrontDrive.spin(fwd, right, volt);
+    rightMiddleDrive.spin(fwd, right, volt);
     wait(10, msec);
   }
-  lFrontDrive.stop();
-  rFrontDrive.stop();
-  lMiddleDrive.stop();
-  rMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
 }
 
 void arcturnTime (double left, double right, int length) {
-  lFrontDrive.spin(fwd, left, volt);
-  lMiddleDrive.spin(fwd, left, volt);
-  rFrontDrive.spin(fwd, right, volt);
-  rMiddleDrive.spin(fwd, right, volt);
+  leftFrontDrive.spin(fwd, left, volt);
+  leftMiddleDrive.spin(fwd, left, volt);
+  rightFrontDrive.spin(fwd, right, volt);
+  rightMiddleDrive.spin(fwd, right, volt);
   wait(length, msec);
-  lFrontDrive.stop();
-  rFrontDrive.stop();
-  lMiddleDrive.stop();
-  rMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
 }*/

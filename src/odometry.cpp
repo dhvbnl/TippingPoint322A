@@ -5,15 +5,15 @@ const double errorMargin = 0.01;
 const double V_trackWidth = 2.25;
 const double H_trackWidth = 2.60;
 
-struct Coordinate {
-  double xPos;
-  double yPos;
-  double deltaH;
-  double thetaRad;
-  double linearDistance; 
-  double headingRad;
-  double clockwiseHeadRad;
-  double deltaHeading;
+ struct Coordinate {
+   double xPos;
+   double yPos;
+   double deltaH;
+   double thetaRad;
+   double linearDistance; 
+   double headingRad;
+   double clockwiseHeadRad;
+   double deltaHeading;
 } coor; 
 
 void horizontalmove() {
@@ -29,7 +29,7 @@ void horizontalmove() {
     }
     else
     {
-        radius = (coor.deltaH / coor.deltaHeading); 
+        radius = (coor.deltaH / coor.deltaHeading)+ H_trackWidth; 
         linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
     }
 
@@ -103,6 +103,83 @@ void horizontalmove() {
   wait(100, msec);
 }
 
+// turn the robot based on absolute position from the original point of the robot
+void drivetrainTurn(double targetdeg) {
+
+   // proportionality constants
+  double kP = 0.45;
+  double kI = 0.0001;
+  double kD = 0.01;
+
+  // PID loop variables
+  double error = 1;
+  double integral = 0;
+  double derivative = 0;
+  double prevError = 0;
+  double motorPower = 0;
+  bool useright = true;
+
+  double tempX = coor.xPos;
+  double tempY = coor.yPos;
+
+  while (fabs(targetdeg - getInertialHeading()) > 2) {
+    // PID loop to determine motorPower at any given point in time
+    double head = getInertialHeading();
+    double errorright = targetdeg - head;
+    if (targetdeg < head) {
+      errorright = 360 - head + targetdeg;
+    }
+    double errorleft = fabs(targetdeg - head);
+    if (targetdeg > head) {
+      errorleft = 360 + head - targetdeg;
+    }
+    if (errorright < errorleft) {
+      error = errorright;
+      useright = true;
+    } else {
+      error = errorleft;
+      useright = false;
+    }
+    // pid stuff
+    integral = integral + error;
+    if (error == 0 or error > targetdeg) {
+      integral = 0;
+    }
+    derivative = error - prevError;
+    motorPower = (error * kP + integral * kI + derivative * kD);
+    prevError = error;
+
+    wait(15, msec);
+
+    // powering the motors
+    if (useright) {
+      leftFrontDrive.spin(fwd, -motorPower, pct);
+      leftMiddleDrive.spin(fwd, -motorPower, pct);
+      leftBackDrive.spin(fwd, -motorPower, pct);
+      rightMiddleDrive.spin(fwd, motorPower, pct);
+      rightFrontDrive.spin(fwd, motorPower, pct);
+      rightBackDrive.spin(fwd, motorPower, pct);
+    } else {
+      leftFrontDrive.spin(fwd, motorPower, pct);
+      leftMiddleDrive.spin(fwd, motorPower, pct);
+      leftBackDrive.spin(fwd, motorPower, pct);
+      rightMiddleDrive.spin(fwd, -motorPower, pct);
+      rightFrontDrive.spin(fwd, -motorPower, pct);
+      rightBackDrive.spin(fwd, -motorPower, pct);
+    }
+  }
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  rightBackDrive.stop();
+  leftBackDrive.stop();
+
+  coor.xPos = tempX;
+  coor.yPos = tempY;
+  wait(100, msec);
+}
+
 double getxPos() {
   return coor.xPos;
 }
@@ -111,7 +188,8 @@ double getyPos() {
   return coor.yPos;
 }
 
-int setPos (double x, double y, bool repeat) {
+// if endHeading doesn't matter, input a number > 360
+int setPos (double x, double y, bool fwd, double endHeading) {
   
   double curr_xPos = coor.xPos;
   double curr_yPos = coor.yPos;
@@ -127,51 +205,62 @@ int setPos (double x, double y, bool repeat) {
     // Current position (curr_xPos, curr_yPos) is new "center of origin" for quadrant system
     if (x > curr_xPos && y > curr_yPos) // Quadrant 1 angle
     {
-      drivetrainTurn(90 - refAngle);
+      if (fwd) drivetrainTurn(90 - refAngle);
+      if (!fwd) drivetrainTurn(270 - refAngle);
     } 
     else if (x < curr_xPos && y > curr_yPos) // Quadrant 2 angle
     {
-      drivetrainTurn(270 + refAngle);
+      if (fwd) drivetrainTurn(270 + refAngle);
+      if (!fwd) drivetrainTurn(90 + refAngle);
     } 
     else if (x < curr_xPos && y < curr_yPos) // Quadrant 3 angle
     {
-      drivetrainTurn(270 - refAngle);
+      if (fwd) drivetrainTurn(270 - refAngle);
+      if (!fwd) drivetrainTurn(90 - refAngle);
     } 
     else if (x > curr_xPos && y < curr_yPos)
     { 
-      drivetrainTurn(90 + refAngle);
+      if (fwd) drivetrainTurn(90 + refAngle);
+      if (!fwd) drivetrainTurn(270 + refAngle);
     } 
     else if (xdist == 0) 
     {
       Controller.Screen.print(ydist);
       hyp = fabs(ydist);
-      if (ydist > 0 && fabs(getInertialHeading() - 0) > 1) {
-        drivetrainTurn(0);
-      } else if (ydist < 0 && fabs(getInertialHeading() - 0) > 1) {
-        drivetrainTurn(180);
+      if (ydist > 0 && fabs(getInertialHeading()) > 1) {
+        if (fwd) drivetrainTurn(0);
+        if (!fwd) drivetrainTurn(180);
+      } 
+      else if (ydist < 0 && fabs(getInertialHeading() - 180) > 1) {
+        if (fwd) drivetrainTurn(180);
+        if (!fwd) drivetrainTurn(0);
       }
     } 
     else if (ydist == 0) 
     {
       hyp = fabs(xdist);
       if (xdist > 0 && fabs(getInertialHeading() - 90) > 1) {
-        drivetrainTurn(90);
-      } else if (xdist < 0 && fabs(getInertialHeading() - 0) > 1) {
-        drivetrainTurn(270);
+        if (fwd) drivetrainTurn(90);
+        if (!fwd) drivetrainTurn(270);
+      } 
+      else if (xdist < 0 && fabs(getInertialHeading() - 0) > 1) {
+        if (fwd) drivetrainTurn(270);
+        if (!fwd) drivetrainTurn(90);
       }
     }
     wait(100, msec);
     Controller.Screen.clearLine();
     Controller.Screen.print("here");
     printf(" refAng: %f", refAngle);
-    driveProfileslow(hyp, true);
-    
-    if (repeat) 
-    {
-      if (fabs(x - coor.xPos) > 1 || fabs(y - coor.yPos) > 1) {
-        setPos(x, y, false);
-      }
+    driveProfileslow(hyp, fwd);
+    if (endHeading < 360) {
+      drivetrainTurn(endHeading);
     }
+    
+    if (fabs(x - coor.xPos) > 1 || fabs(y - coor.yPos) > 1) {
+      setPos(x, y, fwd, endHeading);
+    }
+    
   }
   return 0;
 } 
@@ -222,7 +311,7 @@ int getPos()
       }
       else
       {
-          radius = (deltaEn / coor.deltaHeading); 
+          radius = (deltaEn / coor.deltaHeading) + V_trackWidth; 
           coor.linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
       }
 
@@ -232,14 +321,10 @@ int getPos()
 
       coor.xPos += deltaX; 
       coor.yPos += deltaY;
-      //printPos();
 
       //printf("delta h: %f\n", coor.deltaH);
       horizontalmove();
       wait(100, msec);
-      /* if (fabs(coor.deltaH) > 0.01) {
-        horizontalmove();
-      } */
       previousEn = currentEn;
       prevHeadRad = coor.headingRad;
       previousH = currentH;
@@ -268,5 +353,81 @@ void printPos() {
   printf("x: %f", coor.xPos);
   printf("y: %f\n", coor.yPos);
 }
+
+
+int setPos2 (double x, double y, bool fwd, double endHeading) {
+  
+  double curr_xPos = coor.xPos;
+  double curr_yPos = coor.yPos;
+  double xdist = x - curr_xPos;
+  double ydist = y - curr_yPos;
+  double hyp = sqrt((xdist * xdist) + (ydist * ydist));
+  double refAngle = fabs(atan(ydist/xdist)) * 180 / M_PI;
+  double currdis = getVerticalEncoderRotation();
+  wait(100, msec);
+
+  if (xdist != 0 || ydist != 0) {
+    // Using quadrants to calculate absolute angle to turn to
+    // Current position (curr_xPos, curr_yPos) is new "center of origin" for quadrant system
+    if (x > curr_xPos && y > curr_yPos) // Quadrant 1 angle
+    {
+      if (fwd) drivetrainTurn(90 - refAngle);
+      if (!fwd) drivetrainTurn(270 - refAngle);
+    } 
+    else if (x < curr_xPos && y > curr_yPos) // Quadrant 2 angle
+    {
+      if (fwd) drivetrainTurn(270 + refAngle);
+      if (!fwd) drivetrainTurn(90 + refAngle);
+    } 
+    else if (x < curr_xPos && y < curr_yPos) // Quadrant 3 angle
+    {
+      if (fwd) drivetrainTurn(270 - refAngle);
+      if (!fwd) drivetrainTurn(90 - refAngle);
+    } 
+    else if (x > curr_xPos && y < curr_yPos)
+    { 
+      if (fwd) drivetrainTurn(90 + refAngle);
+      if (!fwd) drivetrainTurn(270 + refAngle);
+    } 
+    else if (xdist == 0) 
+    {
+      Controller.Screen.print(ydist);
+      hyp = fabs(ydist);
+      if (ydist > 0 && fabs(getInertialHeading()) > 1) {
+        if (fwd) drivetrainTurn(0);
+        if (!fwd) drivetrainTurn(180);
+      } 
+      else if (ydist < 0 && fabs(getInertialHeading() - 180) > 1) {
+        if (fwd) drivetrainTurn(180);
+        if (!fwd) drivetrainTurn(0);
+      }
+    } 
+    else if (ydist == 0) 
+    {
+      hyp = fabs(xdist);
+      if (xdist > 0 && fabs(getInertialHeading() - 90) > 1) {
+        if (fwd) drivetrainTurn(90);
+        if (!fwd) drivetrainTurn(270);
+      } 
+      else if (xdist < 0 && fabs(getInertialHeading() - 0) > 1) {
+        if (fwd) drivetrainTurn(270);
+        if (!fwd) drivetrainTurn(90);
+      }
+    }
+    wait(100, msec);
+    Controller.Screen.clearLine();
+
+    printf(" refAng: %f", refAngle);
+    while (getVerticalEncoderRotation() < currdis + hyp) { 
+        setDrivetrainSpeed(100, 100); //change the speed based on curve
+        /* pseudocode
+          there should be like different line segments, so just match with the closest x and y value with coor.xPos and yPos
+          we can probably save this into an array and then have an variable that checks which line segment on the arc we're on
+        */
+    }
+    
+  }
+  return 0;
+} 
 
 
