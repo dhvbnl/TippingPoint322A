@@ -167,7 +167,7 @@ void resetEncoders() {
 
 //calibrate inertial sensor for preauton
 void calibrateInertial() {
-  inert.calibrate();
+  //inert.calibrate();
   while(inert.isCalibrating()) {
     wait(100, msec);
   }

@@ -67,5 +67,24 @@ void elims() {
 }*/
 
 void test() {
-  drivetrainTurn(90);
+  
+  //drivetrainTurn(90);
+  thread get(getPos);
+  setPos(20, 0, true, 0);
+  setPos(-10, 10, false, 0);
+
+/*leftFrontDrive.spin(vex::directionType::fwd, 4, volt);
+  leftMiddleDrive.spin(vex::directionType::fwd, 4, volt);
+  rightFrontDrive.spin(vex::directionType::fwd, -4, volt);
+  rightMiddleDrive.spin(vex::directionType::fwd, -4, volt); 
+  leftBackDrive.spin(vex::directionType::fwd, 4, volt);
+  rightBackDrive.spin(vex::directionType::fwd, -4, volt);
+ }
+  leftFrontDrive.stop();
+  leftMiddleDrive.stop();
+  rightFrontDrive.stop();
+  rightMiddleDrive.stop();
+  rightBackDrive.stop();
+  leftBackDrive.stop();*/
+
 }

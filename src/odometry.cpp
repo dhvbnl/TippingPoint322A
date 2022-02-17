@@ -107,9 +107,9 @@ void horizontalmove() {
 void drivetrainTurn(double targetdeg) {
 
    // proportionality constants
-  double kP = 0.8;
-  double kI = 0.0001;
-  double kD = 1;
+  double kP = 0.4;
+  double kI = 0.002;
+  double kD = 0.6;
 
   // PID loop variables
   double error = 1;
@@ -122,6 +122,77 @@ void drivetrainTurn(double targetdeg) {
   double tempX = coor.xPos;
   double tempY = coor.yPos;
 
+  while (fabs(targetdeg - getInertialHeading()) > 2) {
+    // PID loop to determine motorPower at any given point in time
+    double head = getInertialHeading();
+   // printf("head %f \n", head);
+    double errorright = targetdeg - head;
+    if (targetdeg < head) {
+      errorright = 360 - head + targetdeg;
+    }
+    double errorleft = fabs(targetdeg - head);
+    if (targetdeg > head) {
+      errorleft = 360 + head - targetdeg;
+    }
+    if (errorright < errorleft) {
+      error = errorright;
+      useright = true;
+    } else {
+      error = errorleft;
+      useright = false;
+    }
+    // pid stuff
+    integral = integral + error;
+    if (error == 0 or error > targetdeg) {
+      integral = 0;
+    }
+    derivative = error - prevError;
+    motorPower = (error * kP + integral * kI + derivative * kD);
+    prevError = error;
+
+    wait(15, msec);
+
+    // powering the motors
+    if (!useright) {
+      leftFrontDrive.spin(fwd, -motorPower, pct);
+      leftMiddleDrive.spin(fwd, -motorPower, pct);
+      leftBackDrive.spin(fwd, -motorPower, pct);
+      rightMiddleDrive.spin(fwd, motorPower, pct);
+      rightFrontDrive.spin(fwd, motorPower, pct);
+      rightBackDrive.spin(fwd, motorPower, pct);
+    } else {
+      leftFrontDrive.spin(fwd, motorPower, pct);
+      leftMiddleDrive.spin(fwd, motorPower, pct);
+      leftBackDrive.spin(fwd, motorPower, pct);
+      rightMiddleDrive.spin(fwd, -motorPower, pct);
+      rightFrontDrive.spin(fwd, -motorPower, pct);
+      rightBackDrive.spin(fwd, -motorPower, pct);
+    }
+  }
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  rightBackDrive.stop();
+  leftBackDrive.stop();
+
+  coor.xPos = tempX;
+  coor.yPos = tempY;
+  wait(10, msec);
+}
+/*void drivetrainTurn(double targetdeg) {
+   // proportionality constants
+  double kP = 0.4;
+  double kI = 0.002;
+  double kD = 0.6;
+
+  // PID loop variables
+  double error = 1;
+  double integral = 0;
+  double derivative = 0;
+  double prevError = 0;
+  double motorPower = 0;
+  bool useright = true;
   while (fabs(targetdeg - getInertialHeading()) > 2) {
     // PID loop to determine motorPower at any given point in time
     double head = getInertialHeading();
@@ -152,7 +223,7 @@ void drivetrainTurn(double targetdeg) {
     wait(15, msec);
 
     // powering the motors
-    if (useright) {
+    if (!useright) {
       leftFrontDrive.spin(fwd, -motorPower, pct);
       leftMiddleDrive.spin(fwd, -motorPower, pct);
       leftBackDrive.spin(fwd, -motorPower, pct);
@@ -174,11 +245,7 @@ void drivetrainTurn(double targetdeg) {
   rightFrontDrive.stop();
   rightBackDrive.stop();
   leftBackDrive.stop();
-
-  coor.xPos = tempX;
-  coor.yPos = tempY;
-  wait(100, msec);
-}
+}*/
 
 double getxPos() {
   return coor.xPos;
@@ -330,8 +397,8 @@ int getPos()
       previousH = currentH;
 
       //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
-      //printf("x: %f", coor.xPos);
-      //printf("y: %f\n", coor.yPos);
+      printf("x: %f", coor.xPos);
+      printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
