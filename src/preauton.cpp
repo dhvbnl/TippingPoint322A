@@ -4,7 +4,6 @@ void preauton() {
   vexcodeInit();
   //set cylinder postion
   rearClamp.set(1);
-  wait(100, msec);
 
   //reset all sensors
   resetDrivetrain();

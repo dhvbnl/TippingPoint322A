@@ -1,7 +1,7 @@
 struct Coordinate;
 
 //setters
-int setPos(double x, double y, bool repeat);
+int setPos(double x, double y, bool fwd, double endHeading);
 
 //getters
 int getPosition();

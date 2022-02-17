@@ -1,23 +1,26 @@
 #include "vex.h"
 
+const int lowerBound = 1475;
+const int upperBound = 2462;
+
 int pnumaticDelayRear = 0;
 int pnumaticDelayFront = 0;
 int intakeDelay = 0;
-int previousTarget = 0;
+int previousTarget = lowerBound;
+int lastPos = lowerBound;
+int holdDelayFourBar = 0;
 
 bool intakeState = false;
 
 int liftControl() {
-  wait(100, msec);
-  previousTarget = getFourBarPot();
   while (true) {
-    //setFourBarSpeed(getFourBarSpeed());
+    setFourBarSpeedHolding(getFourBarSpeed());
     setIntakeSpeed();
     setRearClamp();
     setFrontClamp();
     //Controller.Screen.clearLine();
-    //Controller.Screen.print(getFourBarPos());
-    setFourBarPosition(getFourBarPos());
+    //Controller.Screen.print(fourBar.velocity(pct));
+    //setFourBarPosition(getFourBarPos());
     wait(10, msec);
   }
 }
@@ -26,13 +29,33 @@ void setFourBarSpeed(int speed) {
   fourBar.spin(fwd, speed / voltageConverstion, volt);
 }
 
+void setFourBarSpeedHolding(int speed){
+  if (speed != 0) {
+    setFourBarSpeed(speed);
+    holdDelayFourBar = 0;
+  } else if(holdDelayFourBar > 10){
+    setFourBarPosition(lastPos);
+  } else if(holdDelayFourBar > 0){
+    setFourBarSpeed(0);
+    lastPos = getFourBarPot();
+    holdDelayFourBar++;
+  } else{
+    holdDelayFourBar++;
+  }
+}
+
 void setFourBarPosition(int pos){
-  setFourBarSpeed(3 * (pos - getFourBarPot()));
+  setFourBarSpeed(1.25 * (pos - getFourBarPot()));
 }
 
 void setIntakeSpeed() {
-  if (getAPos() && intakeDelay > 20) {
-    if (!intakeState) {
+  if(rearClampLimit.pressing() && getFourBarPot() > lowerBound + 40 && (getFourBarPot() < 2080 || frontClamp.value() == 0)){
+    intake.spin(fwd, 12, volt);
+  }else{
+    intake.stop();
+  }
+  /*if (getAPos() && intakeDelay > 20) {
+    if (!intakeState && rearClampLimit.pressing()) {
       intake.spin(fwd, 12, volt);
       intakeState = true;
     } else {
@@ -42,7 +65,7 @@ void setIntakeSpeed() {
     intakeDelay = 0;
   } else {
     intakeDelay++;   
-  }
+  }*/
 }
 
 void setRearClamp() {
@@ -55,7 +78,7 @@ void setRearClamp() {
 }
 
 void setFrontClamp() {
-  if (getYPos() && pnumaticDelayFront > 20) {
+  if (getYPos() && pnumaticDelayFront > 50) {
     frontClamp.set(!frontClamp.value());
     pnumaticDelayFront = 0;
   } else {
@@ -67,21 +90,21 @@ int getFourBarSpeed() {
   int potVal = getFourBarPot();
   int returnVal = getAxis2Pos();
   if (returnVal > 0)
-    return returnVal > 345 - potVal ? 1.5 * (345 - potVal) : returnVal;
+    return returnVal > upperBound - potVal ? 1.5 * (upperBound - potVal) : returnVal;
   else if (returnVal < 0)
-    return returnVal < 126 - potVal ? 3 * (128 - potVal) : returnVal;
+    return returnVal < lowerBound - potVal ? 2 * (lowerBound - potVal) : returnVal;
   else
     return 0;
 }
 
 int getFourBarPos() {
-  int axisPos = getAxis2Pos()/ 50;
+  int axisPos = getAxis2Pos()/ 10;
   int currentPos = getFourBarPot();
   if (axisPos > 0){
-    currentPos = axisPos + previousTarget > 345 ? 345 : axisPos + previousTarget; 
+    currentPos = axisPos + previousTarget > upperBound ? upperBound : axisPos + previousTarget; 
     previousTarget = currentPos;
   } else if (axisPos < 0) {
-    currentPos = axisPos + previousTarget < 126 ? 126 : axisPos + previousTarget;
+    currentPos = axisPos + previousTarget < lowerBound ? lowerBound : axisPos + previousTarget;
     previousTarget = currentPos;
   } else{
     currentPos = previousTarget;
@@ -89,4 +112,4 @@ int getFourBarPos() {
   return currentPos;
 }
 
-int getFourBarPot() { return fourBarPot.value(range10bit); }
+int getFourBarPot() { return fourBarPot.value(range12bit); }

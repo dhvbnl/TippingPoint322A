@@ -26,8 +26,10 @@ triport Expander = triport(PORT11);
 encoder verticalTracker = encoder(Expander.A);
 encoder horizontalTracker = encoder(Expander.E);
 
-digital_out rearClamp = digital_out(Expander.C);
+digital_out rearClamp = digital_out(Expander.C);  
 digital_out frontClamp = digital_out(Brain.ThreeWirePort.A);
+
+limit rearClampLimit = limit(Brain.ThreeWirePort.B);
 
 pot fourBarPot = pot(Expander.D);
 

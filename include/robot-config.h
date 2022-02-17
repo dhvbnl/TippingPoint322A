@@ -32,6 +32,8 @@ extern encoder horizontalTracker;
 extern digital_out rearClamp;
 extern digital_out frontClamp;
 
+extern limit rearClampLimit;
+
 extern pot fourBarPot;
 
 void vexcodeInit(void);

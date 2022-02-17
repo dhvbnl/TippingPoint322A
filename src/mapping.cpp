@@ -1,5 +1,6 @@
-/*#include "vex.h"
+#include "vex.h"
 
+/*
 void test() { //(-2.3, 2.3)
   thread getPos(getPosition);
   //setPos(-2.3, 80, false);
@@ -64,3 +65,7 @@ void elims() {
   timeDrive(11, 900);
 
 }*/
+
+void test() {
+  drivetrainTurn(90);
+}

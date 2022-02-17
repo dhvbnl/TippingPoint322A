@@ -107,9 +107,9 @@ void horizontalmove() {
 void drivetrainTurn(double targetdeg) {
 
    // proportionality constants
-  double kP = 0.45;
+  double kP = 0.8;
   double kI = 0.0001;
-  double kD = 0.01;
+  double kD = 1;
 
   // PID loop variables
   double error = 1;
@@ -252,7 +252,7 @@ int setPos (double x, double y, bool fwd, double endHeading) {
     Controller.Screen.clearLine();
     Controller.Screen.print("here");
     printf(" refAng: %f", refAngle);
-    driveProfileslow(hyp, fwd);
+    driveProfile(hyp, 8, fwd);
     if (endHeading < 360) {
       drivetrainTurn(endHeading);
     }
@@ -330,8 +330,8 @@ int getPos()
       previousH = currentH;
 
       //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
-      printf("x: %f", coor.xPos);
-      printf("y: %f\n", coor.yPos);
+      //printf("x: %f", coor.xPos);
+      //printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
