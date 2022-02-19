@@ -43,8 +43,8 @@ int xSize = 107;
 int ySize = 107;
 
 Button autonButtons[] = {
-    Button(spacing, spacing, xSize, ySize, "1", purple, white),
-    Button(2 * spacing + xSize, spacing, xSize, ySize, "2", black, white),
+    Button(spacing, spacing, xSize, ySize, "allainceMain", purple, white),
+    Button(2 * spacing + xSize, spacing, xSize, ySize, "alliancerightGoal", black, white),
 
     Button(3 * spacing + 2 * xSize, 10, xSize, ySize, "3", black, white),
     Button(4 * spacing + 3 * xSize, 10, xSize, ySize, "4", black, white),
@@ -55,15 +55,15 @@ Button autonButtons[] = {
 
     Button(3 * spacing + 2 * xSize, spacing * 2 + ySize, xSize, ySize, "7",
            black, white),
-    Button(4 * spacing + 3 * xSize, spacing * 2 + ySize, xSize, ySize, "8",
+    Button(4 * spacing + 3 * xSize, spacing * 2 + ySize, xSize, ySize, "skills",
            black, white),
 };
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0: test();
+  case 0:  allianceMain();
     break;
-  case 1: // code
+  case 1: alliancerightGoal();
     break;
   case 2: // code
     break;
@@ -75,7 +75,7 @@ void autonomous(void) {
     break;
   case 6: // code
     break;
-  case 7: // code
+  case 7: skills();
     break;
   }
 }
@@ -110,4 +110,10 @@ int main() {
       }
     }
   }
+}
+
+bool taskStop(){
+  if(Competition.isAutonomous())
+    return true;
+  return false;
 }

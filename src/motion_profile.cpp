@@ -77,8 +77,9 @@ int decelerate() {
     acc.dist += lorig;
     while ((getVerticalEncoderRotation() * convertInches) < acc.dist) {
      // speed = 1.1 * exp((-0.4 * fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 2) + 1.15;
-      speed = -3.8 * log(fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 10;
+      speed = -3.8 * log(fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 11;
         if (speed > acc.maxspeed) speed = acc.maxspeed;
+        if (speed < 3) speed = 3;
         //if (speed < 3) speed = 3;
         wait(10, msec);
     }
@@ -98,9 +99,9 @@ int decelerate() {
         if (getVerticalEncoderRotation() < lorig) {
           changeindist = lorig - (getVerticalEncoderRotation() * convertInches);
         }
-        speed = -3.8 * log(changeindist) + 10;
-        printf("change in distance %i \n", changeindist);
-        printf("speed %f \n", speed);
+        speed = -3.8 * log(changeindist) + 11;
+       // printf("change in distance %i \n", changeindist);
+        //printf("speed %f \n", speed);
         if (speed > acc.maxspeed) speed = acc.maxspeed;
         //if (speed < 3) speed = 3;
         wait(10, msec);
@@ -113,6 +114,7 @@ int decelerate() {
 
 int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation flipped
   //Inertial.resetRotation();
+  acc.dist = 0;
   double acceldist = 0;
   int targetL = 0;
   double actdist;
@@ -148,13 +150,12 @@ int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation fl
    
     while (getVerticalEncoderRotation() < targetL) {
       move(speed, true);
-      printf(" encoderacc: %f\n", getVerticalEncoderRotation() * convertInches);
       wait(10, msec);
     }
     thread1.interrupt();
     while (getVerticalEncoderRotation() < (actdist - acceldist)) {
       move(maxspeed, true);
-      printf(" encodermax: %f\n", getVerticalEncoderRotation() * convertInches);
+     // printf(" encodermax: %f\n", getVerticalEncoderRotation() * convertInches);
     } 
     acc.dist = acceldist * convertInches;
     thread thread3(decelerate);
@@ -163,7 +164,7 @@ int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation fl
     
     while (getVerticalEncoderRotation() < actdist ) {
       move(speed, true);
-      printf(" encoderdes: %f\n", getVerticalEncoderRotation() * convertInches);
+    //  printf(" encoderdes: %f\n", getVerticalEncoderRotation() * convertInches);
     }
     thread3.interrupt();
   } 
@@ -209,23 +210,8 @@ int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation fl
   rightMiddleDrive.stop();
   rightBackDrive.stop();
   leftBackDrive.stop();
+  printf("done with motion profile");
   return 0;
 }
 
-int test2() {
-  resetEncoders();
-  setDrivetrainLock();
-  driveProfile(30, 8, true);
-  // while (getVerticalEncoderRotation() * convertInches < 30){
-  //   printf(" encoder: %f\n", getVerticalEncoderRotation() * convertInches);
-  //   //move(10, true);
-  //   wait(10, msec);
-  // }
-  // leftFrontDrive.stop();
-  // leftMiddleDrive.stop();
-  // rightFrontDrive.stop();
-  // rightMiddleDrive.stop();
-  // rightBackDrive.stop();
-  // leftBackDrive.stop();
-  return 0;
-}
+

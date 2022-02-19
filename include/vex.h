@@ -16,6 +16,7 @@
 #include "odometry.h"
 #include "preauton.h"
 #include "mapping.h"
+#include "main.h"
 
 using std::string;
 

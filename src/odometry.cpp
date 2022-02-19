@@ -107,9 +107,17 @@ void horizontalmove() {
 void drivetrainTurn(double targetdeg) {
 
    // proportionality constants
-  double kP = 0.4;
-  double kI = 0.002;
-  double kD = 0.6;
+  double kP = 0.1;
+  double kI = 0.0003;
+  double kD = 0.7;
+  //double kP = 0.55;
+  //double kI = 0.005;
+  //double kD = 1.3;
+  /*if(rearClampLimit.pressing()){
+    kP = 0.47;
+    kI = 0.001;
+    kD = 1.2;
+  }*/
 
   // PID loop variables
   double error = 1;
@@ -122,7 +130,7 @@ void drivetrainTurn(double targetdeg) {
   double tempX = coor.xPos;
   double tempY = coor.yPos;
 
-  while (fabs(targetdeg - getInertialHeading()) > 2) {
+  while (fabs(targetdeg - getInertialHeading()) > 0.5) {
     // PID loop to determine motorPower at any given point in time
     double head = getInertialHeading();
    // printf("head %f \n", head);
@@ -150,23 +158,27 @@ void drivetrainTurn(double targetdeg) {
     motorPower = (error * kP + integral * kI + derivative * kD);
     prevError = error;
 
+    if(motorPower < 2.7){
+      motorPower = 2.7;
+    }
+
     wait(15, msec);
 
     // powering the motors
     if (!useright) {
-      leftFrontDrive.spin(fwd, -motorPower, pct);
-      leftMiddleDrive.spin(fwd, -motorPower, pct);
-      leftBackDrive.spin(fwd, -motorPower, pct);
-      rightMiddleDrive.spin(fwd, motorPower, pct);
-      rightFrontDrive.spin(fwd, motorPower, pct);
-      rightBackDrive.spin(fwd, motorPower, pct);
+      leftFrontDrive.spin(fwd, -motorPower, volt);
+      leftMiddleDrive.spin(fwd, -motorPower, volt);
+      leftBackDrive.spin(fwd, -motorPower, volt);
+      rightMiddleDrive.spin(fwd, motorPower, volt);
+      rightFrontDrive.spin(fwd, motorPower, volt);
+      rightBackDrive.spin(fwd, motorPower, volt);
     } else {
-      leftFrontDrive.spin(fwd, motorPower, pct);
-      leftMiddleDrive.spin(fwd, motorPower, pct);
-      leftBackDrive.spin(fwd, motorPower, pct);
-      rightMiddleDrive.spin(fwd, -motorPower, pct);
-      rightFrontDrive.spin(fwd, -motorPower, pct);
-      rightBackDrive.spin(fwd, -motorPower, pct);
+      leftFrontDrive.spin(fwd, motorPower, volt);
+      leftMiddleDrive.spin(fwd, motorPower, volt);
+      leftBackDrive.spin(fwd, motorPower, volt);
+      rightMiddleDrive.spin(fwd, -motorPower, volt);
+      rightFrontDrive.spin(fwd, -motorPower, volt);
+      rightBackDrive.spin(fwd, -motorPower, volt);
     }
   }
   leftMiddleDrive.stop();
@@ -178,7 +190,7 @@ void drivetrainTurn(double targetdeg) {
 
   coor.xPos = tempX;
   coor.yPos = tempY;
-  wait(10, msec);
+  wait(100, msec);
 }
 /*void drivetrainTurn(double targetdeg) {
    // proportionality constants
@@ -256,7 +268,7 @@ double getyPos() {
 }
 
 // if endHeading doesn't matter, input a number > 360
-int setPos (double x, double y, bool fwd, double endHeading) {
+int setPos (double x, double y, double speed, bool fwd) {
   
   double curr_xPos = coor.xPos;
   double curr_yPos = coor.yPos;
@@ -265,8 +277,8 @@ int setPos (double x, double y, bool fwd, double endHeading) {
   double hyp = sqrt((xdist * xdist) + (ydist * ydist));
   double refAngle = fabs(atan(ydist/xdist)) * 180 / M_PI;
   
-  wait(100, msec);
-
+  wait(10, msec);
+ // printf("refangle %f\n", refAngle);
   if (xdist != 0 || ydist != 0) {
     // Using quadrants to calculate absolute angle to turn to
     // Current position (curr_xPos, curr_yPos) is new "center of origin" for quadrant system
@@ -294,7 +306,7 @@ int setPos (double x, double y, bool fwd, double endHeading) {
     {
       Controller.Screen.print(ydist);
       hyp = fabs(ydist);
-      if (ydist > 0 && fabs(getInertialHeading()) > 1) {
+      if (fabs(ydist) > 0 && (fabs(getInertialHeading()) > 1 || fabs(getInertialHeading()) < 359)) {
         if (fwd) drivetrainTurn(0);
         if (!fwd) drivetrainTurn(180);
       } 
@@ -317,16 +329,16 @@ int setPos (double x, double y, bool fwd, double endHeading) {
     }
     wait(100, msec);
     Controller.Screen.clearLine();
-    Controller.Screen.print("here");
-    printf(" refAng: %f", refAngle);
-    driveProfile(hyp, 8, fwd);
-    if (endHeading < 360) {
-      drivetrainTurn(endHeading);
-    }
+    //Controller.Screen.print("here");
+    //printf(" refAng: %f", refAngle);
+    driveProfile(hyp, speed, fwd);
+    // if (endHeading < 360) {
+    //   drivetrainTurn(endHeading);
+    // }
     
-    if (fabs(x - coor.xPos) > 1 || fabs(y - coor.yPos) > 1) {
+    /*if (fabs(x - coor.xPos) > 1 || fabs(y - coor.yPos) > 1) {
       setPos(x, y, fwd, endHeading);
-    }
+    }*/
     
   }
   return 0;
@@ -397,12 +409,12 @@ int getPos()
       previousH = currentH;
 
       //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
-      printf("x: %f", coor.xPos);
-      printf("y: %f\n", coor.yPos);
+      //printf("x: %f", coor.xPos);
+      //printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
-      Brain.Screen.clearLine();
+      //Brain.Screen.clearLine();
     }
 
   return 0;

@@ -207,7 +207,7 @@ std::string tempInfoDrive() {
 }
 
 
-/*
+
 
 //drive movement based on time
 void timeDrive(double speed, int timeLength) {
@@ -215,8 +215,8 @@ void timeDrive(double speed, int timeLength) {
   rightFrontDrive.spin(fwd, speed, volt);
   leftMiddleDrive.spin(fwd, speed, volt);
   rightMiddleDrive.spin(fwd, speed, volt);
-  leftBackDrive.spin(fwd, -speed, volt);
-  rightBackDrive.spin(fwd, -speed, volt);
+  leftBackDrive.spin(fwd, speed, volt);
+  rightBackDrive.spin(fwd, speed, volt);
 
   wait(timeLength, msec);
 
@@ -228,7 +228,7 @@ void timeDrive(double speed, int timeLength) {
   rightBackDrive.stop();
 }
 
-//turn based on different left and right speed to move in a curve
+/*//turn based on different left and right speed to move in a curve
 void arcturn (double left, double right, double turnangle) {
   while (getInertialHeading() < turnangle - 2 || getInertialHeading() > turnangle + 2) {
     leftFrontDrive.spin(fwd, left, volt);
