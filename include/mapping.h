@@ -6,7 +6,11 @@ void farGoal();
 void elims();
 
 void allianceMain();
+void allianceMainCut();
 void alliancerightGoal();
+void allianceleftGoal();
+void rightsidewinpoint();
+
 
 void teamworkwinpoint();
 

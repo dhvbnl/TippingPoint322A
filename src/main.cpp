@@ -46,10 +46,10 @@ Button autonButtons[] = {
     Button(spacing, spacing, xSize, ySize, "allainceMain", purple, white),
     Button(2 * spacing + xSize, spacing, xSize, ySize, "alliancerightGoal", black, white),
 
-    Button(3 * spacing + 2 * xSize, 10, xSize, ySize, "3", black, white),
-    Button(4 * spacing + 3 * xSize, 10, xSize, ySize, "4", black, white),
+    Button(3 * spacing + 2 * xSize, 10, xSize, ySize, "allianceleftGoal", black, white),
+    Button(4 * spacing + 3 * xSize, 10, xSize, ySize, "alliancemainCut", black, white),
 
-    Button(spacing, spacing * 2 + ySize, xSize, ySize, "5", black, white),
+    Button(spacing, spacing * 2 + ySize, xSize, ySize, "rightsidewinpoint", black, white),
     Button(spacing * 2 + xSize, spacing * 2 + ySize, xSize, ySize, "6", black,
            white),
 
@@ -61,15 +61,15 @@ Button autonButtons[] = {
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0:  allianceMain();
+  case 0:  alliancerightGoal();
     break;
   case 1: alliancerightGoal();
     break;
-  case 2: // code
+  case 2: allianceleftGoal();// code
     break;
-  case 3: // code
+  case 3: allianceMainCut();// code
     break;
-  case 4: // code
+  case 4: rightsidewinpoint();// code
     break;
   case 5: // code
     break;

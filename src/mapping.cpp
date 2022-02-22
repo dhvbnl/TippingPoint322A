@@ -24,34 +24,102 @@ void allianceMain() {
   fourBar.stop();
 }
 
-void alliancerightGoal(){
+void allianceMainCut() {
   thread odometry(getPos);
   thread lifts(setFourBarIntakeAuton);
-  setFrontClampAuton();
-  timeDrive(10, 800);
-  wait(200, msec);
-  setFrontClampAuton();
-  wait(500, msec);
-  setPos(0, 25, 8, false);
-  //setPos(0, 18, 7, false);
-  wait(200, msec);
-  setPos(-15, 25, 5, true);
-  setFrontClampAuton();
-  wait(200, msec);
-  setPos(12, 24, 5, false);
+  timeDrive(-4, 200);
   setRearClampAuton();
   changeArmPos(1650);
-  setPos(4, 25, 7, true);
-  drivetrainTurn(0);
+  timeDrive(4, 300);
+  wait(500, msec);
   intakeMove(true);
+  wait(1000, msec);
+  setPos(27, -5, 5, true);
+  wait(300, msec);
+  setPos(44, -55, 5, true);
   wait(500, msec);
-  timeDrive(4, 1600);
-  wait(500, msec);
-  timeDrive(-8, 700);
+  timeDrive(-4, 500);
   intakeMove(false);
   odometry.interrupt();
   lifts.interrupt();
   fourBar.stop();
+}
+
+void alliancerightGoal(){
+  thread odometry(getPos);
+  thread lifts(setFourBarIntakeAuton);
+  setFrontClampAuton();
+  timeDrive(12, 700);
+  wait(350, msec);
+  setFrontClampAuton();
+  wait(200, msec);
+  timeDrive(-7, 1100);
+  //setPos(0, 18, 7, false);
+  wait(200, msec);
+  changeArmPos(1650);
+  wait(500, msec);
+  drivetrainTurn(305);
+  timeDrive(-4, 2300);
+  wait(200, msec);
+  setRearClampAuton();
+  intakeMove(true);
+  wait(500, msec);
+  timeDrive(4, 250);
+  intakeMove(true);
+  wait(2000, msec);
+  intakeMove(false);
+  setRearClampAuton();
+  timeDrive(4, 250);
+
+
+  // //setFrontClampAuton();
+  // wait(200, msec);
+  // setPos(12, 24, 5, false);
+  // setRearClampAuton();
+  // changeArmPos(1650);
+  // setPos(4, 25, 7, true);
+  // drivetrainTurn(0);
+  // intakeMove(true);
+  // wait(500, msec);
+  // timeDrive(4, 1600);
+  // wait(500, msec);
+  // timeDrive(-8, 700);
+  // intakeMove(false);
+  // odometry.interrupt();
+  // lifts.interrupt();
+  // fourBar.stop();
+}
+
+void rightsidewinpoint() {
+  thread odometry(getPos);
+  thread lifts(setFourBarIntakeAuton);
+  timeDrive(-4, 1000);
+  wait(400, msec);
+  setRearClampAuton();
+  wait(400, msec);
+  intakeMove(true);
+  wait(2000, msec);
+  timeDrive(4, 400);
+}
+void allianceleftGoal() {
+  thread odometry(getPos);
+  thread lifts(setFourBarIntakeAuton);
+  changeArmPos(1475);
+  setFrontClampAuton();
+  timeDrive(10, 750);
+  wait(400, msec);
+  setFrontClampAuton();
+  wait(500, msec);
+  timeDrive(-10, 850);
+  wait(200, msec);
+ // setPos(0, -2, 8, false);
+  drivetrainTurn(260);
+  timeDrive(-4, 700);
+  //setRearClampAuton();
+  wait(400, msec);
+  intakeMove(true);
+  //timeDrive(4, 500);
+
 }
 
 void skills(){

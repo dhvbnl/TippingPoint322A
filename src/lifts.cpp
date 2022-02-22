@@ -178,7 +178,7 @@ void setRearClamp() {
   if (getRightPos() && pnumaticDelayRear > 20) {
     rearClamp.set(!rearClamp.value());
     pnumaticDelayRear = 0;
-    thread check(rearClampCheck);
+    //thread check(rearClampCheck);
 
   } else {
     pnumaticDelayRear++;
@@ -194,7 +194,7 @@ void rearClampCheck() {
 }
 
 void setFrontClamp() {
-  if ((getYPos() && pnumaticDelayFront > 20)) {
+  if ((getR1Pos() && pnumaticDelayFront > 20)) {
     frontClamp.set(!frontClamp.value());
     pnumaticDelayFront = 0;
   } else {
