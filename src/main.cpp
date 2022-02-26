@@ -61,7 +61,7 @@ Button autonButtons[] = {
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0:  alliancerightGoal();
+  case 0:  test3();//alliancerightGoal();
     break;
   case 1: alliancerightGoal();
     break;

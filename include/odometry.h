@@ -15,3 +15,4 @@ void drivetrainTurn(double targetdeg);
 //debug
 void printPos();
 void hi();
+void test3();

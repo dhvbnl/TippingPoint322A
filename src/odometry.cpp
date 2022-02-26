@@ -29,7 +29,7 @@ void horizontalmove() {
     }
     else
     {
-        radius = (coor.deltaH / coor.deltaHeading)+ H_trackWidth; 
+        radius = (coor.deltaH / coor.deltaHeading) - H_trackWidth; 
         linearDistance = 2.0 * radius * sin(coor.deltaHeading / 2.0);
     }
 
@@ -107,9 +107,12 @@ void horizontalmove() {
 void drivetrainTurn(double targetdeg) {
 
    // proportionality constants
-  double kP = 0.1;
-  double kI = 0.0003;
-  double kD = 0.7;
+  // double kP = 0.388;
+  // double kI = .00001;
+  // double kD = 0.12;
+   double kP = 0.20;
+   double kI = 0.0000015;
+   double kD = 0.992;
   //double kP = 0.55;
   //double kI = 0.005;
   //double kD = 1.3;
@@ -127,8 +130,8 @@ void drivetrainTurn(double targetdeg) {
   double motorPower = 0;
   bool useright = true;
 
-  double tempX = coor.xPos;
-  double tempY = coor.yPos;
+  // double tempX = coor.xPos;
+  // double tempY = coor.yPos;
 
   while (fabs(targetdeg - getInertialHeading()) > 0.5) {
     // PID loop to determine motorPower at any given point in time
@@ -188,8 +191,8 @@ void drivetrainTurn(double targetdeg) {
   rightBackDrive.stop();
   leftBackDrive.stop();
 
-  coor.xPos = tempX;
-  coor.yPos = tempY;
+  // coor.xPos = tempX;
+  // coor.yPos = tempY;
   wait(100, msec);
 }
 /*void drivetrainTurn(double targetdeg) {
@@ -409,8 +412,8 @@ int getPos()
       previousH = currentH;
 
       //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
-      //printf("x: %f", coor.xPos);
-      //printf("y: %f\n", coor.yPos);
+      // printf("x: %f", coor.xPos);
+      // printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
@@ -509,4 +512,16 @@ int setPos2 (double x, double y, bool fwd, double endHeading) {
   return 0;
 } 
 
-
+void test3() {
+  thread get(getPos);
+  setDrivetrainLock();
+  resetEncoders();
+  calibrateInertial();
+  wait(200, msec);
+  drivetrainTurn(90);
+  printf("inertial %f\n", getInertialHeading());
+  // while (true) {
+  //   printPos();
+  //   wait(10, msec);
+  // }
+}
