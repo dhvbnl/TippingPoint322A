@@ -17,6 +17,7 @@
 #include "preauton.h"
 #include "mapping.h"
 #include "main.h"
+#include "vision.h"
 
 using std::string;
 

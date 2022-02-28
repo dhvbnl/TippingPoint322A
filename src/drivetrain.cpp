@@ -36,7 +36,7 @@ void startBalance(){
 // setters
 
 //sets speed of drivetrain based on left and right velocity inputs
-void setDrivetrainSpeed(int leftSpeed, int rightSpeed) {
+void setDrivetrainSpeed(double leftSpeed, double rightSpeed) {
   leftFrontDrive.spin(fwd, leftSpeed, volt);
   leftMiddleDrive.spin(fwd, leftSpeed, volt);
   leftBackDrive.spin(fwd, leftSpeed, volt);

@@ -1,7 +1,7 @@
 #include "vex.h"
 
 // Global constants
-const double errorMargin = 0.01;
+//const double errorMargin = 0.01;
 const double V_trackWidth = 2.25;
 const double H_trackWidth = 2.60;
 
@@ -18,8 +18,8 @@ const double H_trackWidth = 2.60;
 
 void horizontalmove() {
   //double refAngle;
-  double headingDeg = (coor.clockwiseHeadRad) * (180 / M_PI);
-  int dir = 0;
+  //double headingDeg = (coor.clockwiseHeadRad) * (180 / M_PI);
+  //int dir = 0;
   double radius; double linearDistance;
       
       // Calculate the incremental linear distance traveled.

@@ -8,8 +8,7 @@ void drivetrainControl();
 void startBalance();
 
 //setters
-void setDrivetrainSpeed(int leftSpeed, int rightSpeed);
-
+void setDrivetrainSpeed(double leftSpeed, double rightSpeed);
 
 void setDrivetrainStopping();
 void setDrivetrainCreep();

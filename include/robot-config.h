@@ -2,6 +2,8 @@ using namespace vex;
 
 extern brain Brain;
 
+using signature = vision::signature;
+
 extern controller Controller;
 
 //main drive motors
@@ -37,5 +39,15 @@ extern limit rearClampLimit;
 extern pot fourBarPot;
 
 extern line rearRingCheck;
+extern line frontLineTracker;
+
+extern sonar rearSonar;
+
+extern vision frontVision;
+extern vision rearVision;
+
+extern signature REDGOAL;
+extern signature YELLOWGOAL;
+extern signature BLUEGOAL;
 
 void vexcodeInit(void);

@@ -1,6 +1,8 @@
 #include "vex.h"
 
 using namespace vex;
+using signature = vision::signature;
+using code = vision::code;
 
 brain Brain;
 
@@ -34,6 +36,16 @@ limit rearClampLimit = limit(Brain.ThreeWirePort.B);
 pot fourBarPot = pot(Expander.D);
 
 line rearRingCheck = line(Brain.ThreeWirePort.E);
+line frontLineTracker = line(Brain.ThreeWirePort.F);
+
+sonar rearSonar = sonar(Brain.ThreeWirePort.C);
+
+signature REDGOAL = signature (1, 10267, 11207, 10736, -835, -387, -610, 11, 0);
+signature YELLOWGOAL = signature (2, 2057, 2409, 2234, -3213, -2875, -3044, 9.2, 0);
+signature BLUEGOAL = signature (3, -2759, -2009, -2384, 11045, 12621, 11834, 4.5, 0);
+
+vision frontVision = vision (PORT6, 25, REDGOAL, YELLOWGOAL, BLUEGOAL);
+vision rearVision = vision (PORT7, 25, REDGOAL, YELLOWGOAL, BLUEGOAL);
 
 void vexcodeInit(void) {
   
