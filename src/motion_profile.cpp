@@ -49,9 +49,13 @@ int accelerate() {
   } else {
     //distance we want the robot to go to - where the robot currently is (becaues the robot is going backwards)
     acc.dist = lorig - acc.dist;
+    int x = 0;
     while ((getVerticalEncoderRotation() * convertInches) > acc.dist) {
       //speed = 3.2 * (fabs((fabs(getLeftEncoderRotation()) * convertInches) - lorig) + 1) + 2.6;
-      speed = pow((fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig) + 0.5), 2) + 2.6;
+      
+          x = lorig - (getVerticalEncoderRotation() * convertInches);
+      
+      speed = pow((x + 0.5), 2) + 2.6;
       //if (speed > 9)
        // speed = 9;
       if (speed > acc.maxspeed) 
@@ -79,7 +83,7 @@ int decelerate() {
      // speed = 1.1 * exp((-0.4 * fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 2) + 1.15;
       speed = -3.8 * log(fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 11;
         if (speed > acc.maxspeed) speed = acc.maxspeed;
-        if (speed < 3) speed = 3;
+        //if (speed < 1) speed = 1;
         //if (speed < 3) speed = 3;
         wait(10, msec);
     }
@@ -96,14 +100,18 @@ int decelerate() {
     while ((getVerticalEncoderRotation() * convertInches) > acc.dist) {
       //speed = 1.5 * exp((-0.25 * fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 2) + -.5; 
       //speed = -3.8 * log(fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 10;
-        if (getVerticalEncoderRotation() < lorig) {
-          changeindist = lorig - (getVerticalEncoderRotation() * convertInches);
-        }
-        speed = -3.8 * log(changeindist) + 11;
+      if (acc.dist < 14) {
+        changeindist = lorig - (getVerticalEncoderRotation() * convertInches) + n;
+      } else {
+        changeindist = lorig - (getVerticalEncoderRotation() * convertInches);
+      }
+        
+        
+        speed = -3.8 *log(changeindist) + 10.5;
        // printf("change in distance %i \n", changeindist);
         //printf("speed %f \n", speed);
         if (speed > acc.maxspeed) speed = acc.maxspeed;
-        //if (speed < 3) speed = 3;
+        //if (speed < 2.5) speed = 1.5;
         wait(10, msec);
     }
   }
@@ -210,6 +218,7 @@ int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation fl
   rightMiddleDrive.stop();
   rightBackDrive.stop();
   leftBackDrive.stop();
+  wait(100, msec);
   printf("done with motion profile");
   return 0;
 }

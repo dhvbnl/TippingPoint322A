@@ -33,6 +33,8 @@ limit rearClampLimit = limit(Brain.ThreeWirePort.B);
 
 pot fourBarPot = pot(Expander.D);
 
+line rearRingCheck = line(Brain.ThreeWirePort.E);
+
 void vexcodeInit(void) {
   
 }

@@ -110,12 +110,21 @@ void drivetrainTurn(double targetdeg) {
   // double kP = 0.388;
   // double kI = .00001;
   // double kD = 0.12;
-   double kP = 0.20;
-   double kI = 0.0000015;
-   double kD = 0.992;
-  //double kP = 0.55;
-  //double kI = 0.005;
-  //double kD = 1.3;
+
+   double kP = 0.18;
+   double kI = 0.0000018;
+   double kD = 1.2;
+
+  // double kP = 0.55;
+  // double kI = 0.005;
+  // double kD = 1.3;
+
+  // double pU = 0.675;
+  // double kU = 1.17 * 0.6;
+  // double kP = 0.5 * kU;
+  // double kI = 1.2 * kU / pU;
+  // double kD = 0.075 * kU * pU + 0.4;
+
   /*if(rearClampLimit.pressing()){
     kP = 0.47;
     kI = 0.001;
@@ -130,10 +139,11 @@ void drivetrainTurn(double targetdeg) {
   double motorPower = 0;
   bool useright = true;
 
-  // double tempX = coor.xPos;
-  // double tempY = coor.yPos;
+  double tempX = coor.xPos;
+  double tempY = coor.yPos;
+  wait(10, msec);
 
-  while (fabs(targetdeg - getInertialHeading()) > 0.5) {
+  while (fabs(targetdeg - getInertialHeading()) > 0.35) {
     // PID loop to determine motorPower at any given point in time
     double head = getInertialHeading();
    // printf("head %f \n", head);
@@ -161,8 +171,8 @@ void drivetrainTurn(double targetdeg) {
     motorPower = (error * kP + integral * kI + derivative * kD);
     prevError = error;
 
-    if(motorPower < 2.7){
-      motorPower = 2.7;
+    if(motorPower < 1.9){
+      motorPower = 1.9;
     }
 
     wait(15, msec);
@@ -191,9 +201,11 @@ void drivetrainTurn(double targetdeg) {
   rightBackDrive.stop();
   leftBackDrive.stop();
 
-  // coor.xPos = tempX;
-  // coor.yPos = tempY;
-  wait(100, msec);
+  coor.xPos = tempX;
+  coor.yPos = tempY;
+  printf("x: %f", coor.xPos);
+  printf("y: %f\n", coor.yPos);
+  wait(10, msec);
 }
 /*void drivetrainTurn(double targetdeg) {
    // proportionality constants
@@ -283,9 +295,47 @@ int setPos (double x, double y, double speed, bool fwd) {
   wait(10, msec);
  // printf("refangle %f\n", refAngle);
   if (xdist != 0 || ydist != 0) {
+    if (xdist == 0) {
+      Controller.Screen.print(ydist);
+      hyp = fabs(ydist);
+      if (fabs(ydist) > 0) {
+        if (fwd) {
+          if (fabs(getInertialHeading()) > 1 && fabs(getInertialHeading()) < 359) {
+            drivetrainTurn(0);
+          }
+        } else {
+          if (fabs(getInertialHeading() - 180) > 1) { 
+            drivetrainTurn(180);
+          }
+        }
+      } 
+      else if (ydist < 0) {
+        if (fwd) {
+          if (fabs(getInertialHeading() - 180) > 1) {
+            drivetrainTurn(180);
+          }  
+        } else {
+          if (fabs(getInertialHeading()) > 1 && fabs(getInertialHeading()) < 359)  {
+            drivetrainTurn(0);
+          }
+        }
+      }
+    } 
+    else if (ydist == 0) 
+    {
+      hyp = fabs(xdist);
+      if (xdist > 0 && fabs(getInertialHeading() - 90) > 1) {
+        if (fwd) drivetrainTurn(90);
+        if (!fwd) drivetrainTurn(270);
+      } 
+      else if (xdist < 0  && (fabs(getInertialHeading()) > 1 || fabs(getInertialHeading()) < 359)) {
+        if (fwd) drivetrainTurn(270);
+        if (!fwd) drivetrainTurn(90);
+      }
+    }
     // Using quadrants to calculate absolute angle to turn to
     // Current position (curr_xPos, curr_yPos) is new "center of origin" for quadrant system
-    if (x > curr_xPos && y > curr_yPos) // Quadrant 1 angle
+    else if (x > curr_xPos && y > curr_yPos) // Quadrant 1 angle
     {
       if (fwd) drivetrainTurn(90 - refAngle);
       if (!fwd) drivetrainTurn(270 - refAngle);
@@ -305,31 +355,7 @@ int setPos (double x, double y, double speed, bool fwd) {
       if (fwd) drivetrainTurn(90 + refAngle);
       if (!fwd) drivetrainTurn(270 + refAngle);
     } 
-    else if (xdist == 0) 
-    {
-      Controller.Screen.print(ydist);
-      hyp = fabs(ydist);
-      if (fabs(ydist) > 0 && (fabs(getInertialHeading()) > 1 || fabs(getInertialHeading()) < 359)) {
-        if (fwd) drivetrainTurn(0);
-        if (!fwd) drivetrainTurn(180);
-      } 
-      else if (ydist < 0 && fabs(getInertialHeading() - 180) > 1) {
-        if (fwd) drivetrainTurn(180);
-        if (!fwd) drivetrainTurn(0);
-      }
-    } 
-    else if (ydist == 0) 
-    {
-      hyp = fabs(xdist);
-      if (xdist > 0 && fabs(getInertialHeading() - 90) > 1) {
-        if (fwd) drivetrainTurn(90);
-        if (!fwd) drivetrainTurn(270);
-      } 
-      else if (xdist < 0 && fabs(getInertialHeading() - 0) > 1) {
-        if (fwd) drivetrainTurn(270);
-        if (!fwd) drivetrainTurn(90);
-      }
-    }
+    
     wait(100, msec);
     Controller.Screen.clearLine();
     //Controller.Screen.print("here");
@@ -344,6 +370,7 @@ int setPos (double x, double y, double speed, bool fwd) {
     }*/
     
   }
+
   return 0;
 } 
 
@@ -364,8 +391,8 @@ int getPos()
   coor.headingRad = 0.0;
   coor.deltaH = 0.0;
   coor.linearDistance = 0.0;
-  coor.xPos = 0.0;
-  coor.yPos = 0.0;
+  coor.xPos = 4.85023 - 0.000230;
+  coor.yPos = -4.849925 - 0.000075;
 
   while (true)
   {
@@ -412,8 +439,8 @@ int getPos()
       previousH = currentH;
 
       //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
-      // printf("x: %f", coor.xPos);
-      // printf("y: %f\n", coor.yPos);
+       printf("x: %f", coor.xPos);
+       printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
@@ -431,95 +458,34 @@ void hi() {
   }
 } 
 
-void printPos() {
-  printf("x: %f", coor.xPos);
-  printf("y: %f\n", coor.yPos);
-}
-
-
-int setPos2 (double x, double y, bool fwd, double endHeading) {
-  
-  double curr_xPos = coor.xPos;
-  double curr_yPos = coor.yPos;
-  double xdist = x - curr_xPos;
-  double ydist = y - curr_yPos;
-  double hyp = sqrt((xdist * xdist) + (ydist * ydist));
-  double refAngle = fabs(atan(ydist/xdist)) * 180 / M_PI;
-  double currdis = getVerticalEncoderRotation();
-  wait(100, msec);
-
-  if (xdist != 0 || ydist != 0) {
-    // Using quadrants to calculate absolute angle to turn to
-    // Current position (curr_xPos, curr_yPos) is new "center of origin" for quadrant system
-    if (x > curr_xPos && y > curr_yPos) // Quadrant 1 angle
-    {
-      if (fwd) drivetrainTurn(90 - refAngle);
-      if (!fwd) drivetrainTurn(270 - refAngle);
-    } 
-    else if (x < curr_xPos && y > curr_yPos) // Quadrant 2 angle
-    {
-      if (fwd) drivetrainTurn(270 + refAngle);
-      if (!fwd) drivetrainTurn(90 + refAngle);
-    } 
-    else if (x < curr_xPos && y < curr_yPos) // Quadrant 3 angle
-    {
-      if (fwd) drivetrainTurn(270 - refAngle);
-      if (!fwd) drivetrainTurn(90 - refAngle);
-    } 
-    else if (x > curr_xPos && y < curr_yPos)
-    { 
-      if (fwd) drivetrainTurn(90 + refAngle);
-      if (!fwd) drivetrainTurn(270 + refAngle);
-    } 
-    else if (xdist == 0) 
-    {
-      Controller.Screen.print(ydist);
-      hyp = fabs(ydist);
-      if (ydist > 0 && fabs(getInertialHeading()) > 1) {
-        if (fwd) drivetrainTurn(0);
-        if (!fwd) drivetrainTurn(180);
-      } 
-      else if (ydist < 0 && fabs(getInertialHeading() - 180) > 1) {
-        if (fwd) drivetrainTurn(180);
-        if (!fwd) drivetrainTurn(0);
-      }
-    } 
-    else if (ydist == 0) 
-    {
-      hyp = fabs(xdist);
-      if (xdist > 0 && fabs(getInertialHeading() - 90) > 1) {
-        if (fwd) drivetrainTurn(90);
-        if (!fwd) drivetrainTurn(270);
-      } 
-      else if (xdist < 0 && fabs(getInertialHeading() - 0) > 1) {
-        if (fwd) drivetrainTurn(270);
-        if (!fwd) drivetrainTurn(90);
-      }
-    }
-    wait(100, msec);
-    Controller.Screen.clearLine();
-
-    printf(" refAng: %f", refAngle);
-    while (getVerticalEncoderRotation() < currdis + hyp) { 
-        setDrivetrainSpeed(100, 100); //change the speed based on curve
-        /* pseudocode
-          there should be like different line segments, so just match with the closest x and y value with coor.xPos and yPos
-          we can probably save this into an array and then have an variable that checks which line segment on the arc we're on
-        */
-    }
-    
-  }
-  return 0;
-} 
-
 void test3() {
-  thread get(getPos);
+ thread get(getPos);
+
   setDrivetrainLock();
   resetEncoders();
   calibrateInertial();
   wait(200, msec);
+  printf("START x: %f", coor.xPos);
+  printf("START y: %f\n", coor.yPos);
+  wait(1000, msec);
+
+ //driveProfile(20, 9, false);
+
   drivetrainTurn(90);
-  printf("inertial %f\n", getInertialHeading());
+  wait(1000, msec);
+  drivetrainTurn(180);
+  wait(1000, msec);
+  drivetrainTurn(270);
+  wait(1000, msec);
+  drivetrainTurn(0);
+  wait(1000, msec);
+
+  // // drivetrainTurn(90);
+  // wait(500, msec);
+  //setPos(10, 0, 8, true);
+  
+ // printf("inertial %f\n", getInertialHeading());
+
   // while (true) {
   //   printPos();
   //   wait(10, msec);

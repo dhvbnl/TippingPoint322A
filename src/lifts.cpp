@@ -133,7 +133,7 @@ void fourBarSeasaw() {
 void setIntakeSpeed() {
   if (!intakeOverride) {
     if (rearClampLimit.pressing() && getFourBarPot() > lowerBound + 40 &&
-        (getFourBarPot() < 2200 || frontClamp.value() == 0)) {
+        (getFourBarPot() < 2200 || frontClamp.value() == 0) && rearRingCheck.value(pct) > 65){
       intake.spin(fwd, 12, volt);
     } else {
       intake.stop();

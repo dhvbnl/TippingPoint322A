@@ -36,4 +36,6 @@ extern limit rearClampLimit;
 
 extern pot fourBarPot;
 
+extern line rearRingCheck;
+
 void vexcodeInit(void);
