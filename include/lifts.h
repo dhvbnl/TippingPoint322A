@@ -28,4 +28,9 @@ void intakeMove(bool start);
 int getFourBarSpeed();
 int getFourBarPos();
 
+bool buttonPressed();
+
 int getFourBarPot();
+int getFourBarCurPos();
+
+void findBottomBound();
