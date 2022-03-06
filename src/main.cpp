@@ -61,15 +61,15 @@ Button autonButtons[] = {
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0:  test3();//alliancerightGoal();
+  case 0:  allianceMain();
     break;
-  case 1: alliancerightGoal();
+  case 1:
     break;
-  case 2: allianceleftGoal();// code
+  case 2: // code
     break;
-  case 3: allianceMainCut();// code
+  case 3: // code
     break;
-  case 4: rightsidewinpoint();// code
+  case 4: // code
     break;
   case 5: // code
     break;

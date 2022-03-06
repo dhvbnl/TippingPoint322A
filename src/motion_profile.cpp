@@ -81,7 +81,7 @@ int decelerate() {
     acc.dist += lorig;
     while ((getVerticalEncoderRotation() * convertInches) < acc.dist) {
      // speed = 1.1 * exp((-0.4 * fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 2) + 1.15;
-      speed = -3.8 * log(fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 11;
+      speed = -3.8 * log(fabs((fabs(getVerticalEncoderRotation()) * convertInches) - lorig + n)) + 11.7;
         if (speed > acc.maxspeed) speed = acc.maxspeed;
         //if (speed < 1) speed = 1;
         //if (speed < 3) speed = 3;

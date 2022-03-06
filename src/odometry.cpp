@@ -111,9 +111,14 @@ void drivetrainTurn(double targetdeg) {
   // double kI = .00001;
   // double kD = 0.12;
 
-   double kP = 0.18;
-   double kI = 0.0000018;
+   double kP = 0.20;
+   double kI = 0.001;
    double kD = 1.2;
+   if (frontLineTracker.value(pct) < 60) {
+     kP = 0.77;
+     kI = 0.001;
+     kD = 1.7;
+   }
 
   // double kP = 0.55;
   // double kI = 0.005;
@@ -203,8 +208,8 @@ void drivetrainTurn(double targetdeg) {
 
   coor.xPos = tempX;
   coor.yPos = tempY;
-  printf("x: %f", coor.xPos);
-  printf("y: %f\n", coor.yPos);
+  // printf("x: %f", coor.xPos);
+  // printf("y: %f\n", coor.yPos);
   wait(10, msec);
 }
 /*void drivetrainTurn(double targetdeg) {
@@ -457,28 +462,85 @@ void hi() {
     printf("encoder h: %f\n", getHorizontalEncoderRotation());
   }
 } 
+void printinertial() {
+  while (true) {
+    printf("print inertial %f \n", getInertialHeading());
+    wait(100, msec);
+  }
+}
+
+void turnNoPid(double deg) {
+  while(getInertialHeading() < deg || getInertialHeading() > deg) 
+  {
+    leftFrontDrive.spin(vex::directionType::fwd, 4, volt);
+    leftMiddleDrive.spin(vex::directionType::fwd, 4, volt);
+    rightFrontDrive.spin(vex::directionType::rev, 4, volt);
+    rightMiddleDrive.spin(vex::directionType::rev, 4, volt);
+    leftBackDrive.spin(vex::directionType::fwd, 4, volt);
+    rightBackDrive.spin(vex::directionType::rev, 4, volt);
+  }
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  rightBackDrive.stop();
+  leftBackDrive.stop();
+}
+void stopdrive() {
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  rightBackDrive.stop();
+  leftBackDrive.stop();
+}
 
 void test3() {
- thread get(getPos);
+  timer test;
+  thread lifts(setFourBarIntakeAuton);
+  // setDrivetrainLock();
+  // findFrontGoal(yellow, YELLOWGOAL, 12, true, true, false);
+  // backUpSonar(15, 12);
+  // findRearGoal(red, REDGOAL, 7, false, true, false);
+  // Controller.Screen.print(test.time(sec));
+  // wait(100, sec);
+  thread p(printinertial);
+
 
   setDrivetrainLock();
   resetEncoders();
   calibrateInertial();
   wait(200, msec);
-  printf("START x: %f", coor.xPos);
-  printf("START y: %f\n", coor.yPos);
-  wait(1000, msec);
 
+ 
  //driveProfile(20, 9, false);
-
+  setFrontClampAuton();
+  wait(2000, msec);
+  setRearClampAuton();
+  wait(200, msec);
+  setFrontClampAuton();
+  wait(1000, msec);
+  changeArmPos(2285);
+  wait(1000, msec);
   drivetrainTurn(90);
-  wait(1000, msec);
-  drivetrainTurn(180);
-  wait(1000, msec);
-  drivetrainTurn(270);
-  wait(1000, msec);
-  drivetrainTurn(0);
-  wait(1000, msec);
+  printf("turn done %f \n", getInertialHeading());
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  rightBackDrive.stop();
+  leftBackDrive.stop();
+  wait(2000, msec);
+  // wait(1000, msec);
+  // drivetrainTurn(120);
+  // printf("print inertial %f \n", getInertialHeading());
+  // wait(1000, msec);
+  // drivetrainTurn(280);
+  // printf("print inertial %f \n", getInertialHeading());
+  // wait(1000, msec);
+  // drivetrainTurn(0);
+  // printf("print inertial %f \n", getInertialHeading());
+  // wait(1000, msec);
 
   // // drivetrainTurn(90);
   // wait(500, msec);

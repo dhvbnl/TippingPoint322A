@@ -1,20 +1,11 @@
-void test();
-void redalliance();
-void skills();
-void seesawGoal();
-void farGoal();
-void elims();
-
 void allianceMain();
-void allianceMainCut();
-void alliancerightGoal();
-void allianceleftGoal();
-void rightsidewinpoint();
 
+void allianceRightNeutral();
 
-void teamworkwinpoint();
+void allainceMiddleNeutral();
+ 
+void allianceLeftNeutral();
 
-void autonStop();
-void skillsauton();
-void teamworkright();
-void teamworkleft();
+void skills();
+
+void skillsBackup();

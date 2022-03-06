@@ -15,7 +15,7 @@ void preauton() {
 
   //calibrate inertial sensor
   calibrateInertial();
-  Controller.Screen.print("Preauton Complete");
+  //Controller.Screen.print("Preauton Complete");
  // thread controllerScreen(screenGUI);
 }
 

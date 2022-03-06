@@ -9,10 +9,11 @@ int getPos();
 double getyPos();
 double getxPos();
 void horizontalmove();
-
+void stopdrive();
 void drivetrainTurn(double targetdeg);
 
 //debug
 void printPos();
 void hi();
 void test3();
+void printinertial();

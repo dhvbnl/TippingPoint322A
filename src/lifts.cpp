@@ -1,9 +1,9 @@
 #include "vex.h"
 
-const int lowerBound = 1475;
+const int lowerBound = 1450;
 const int ringHeight = 1650;
 const int seasawHeight = 2285;
-const int upperBound = 2462;
+const int upperBound = 2520;
 
 int armPos = lowerBound;
 
@@ -21,13 +21,13 @@ bool intakeState = false;
 bool runIntake = false;
 
 int liftControl() {
-  fourBar.setBrake(coast);
+  fourBar.setBrake(brake);
   while (true) {
     setFourBarSpeedHolding(getFourBarSpeed());
     setIntakeSpeed();
     setRearClamp();
     setFrontClamp();
-    wait(30, msec);
+    wait(20, msec);
   }
 }
 
@@ -56,15 +56,8 @@ void setFourBarSpeedHolding(int speed) {
     return;
   if (speed != 0) {
     setFourBarSpeed(speed);
-    holdDelayFourBar = 0;
-  } else if (holdDelayFourBar > 5) {
-    setFourBarPosition(lastPos);
-  } else if (holdDelayFourBar > 0) {
-    setFourBarSpeed(0);
-    lastPos = getFourBarPot();
-    holdDelayFourBar++;
-  } else {
-    holdDelayFourBar++;
+  } else{
+    setFourBarPosition(getFourBarPot());
   }
 }
 
@@ -139,7 +132,7 @@ void setIntakeSpeed() {
       intake.stop();
     }
   } else {
-    if (getL1Pos() && intakeDelay > 20) {
+    if (getR1Pos() && intakeDelay > 20) {
       if (!intakeState) {
         intake.spin(fwd, 12, volt);
         intakeState = true;
@@ -153,7 +146,7 @@ void setIntakeSpeed() {
     }
   }
 
-  if (getL2Pos() && intakeDelay > 20) {
+  if (getR2Pos() && intakeDelay > 20) {
     intakeOverride ^= true;
     intake.spin(fwd, intake.isSpinning() ? 0 : 12, volt);
     intakeDelay = 0;
@@ -175,7 +168,7 @@ void setIntakeSpeed() {
 }
 
 void setRearClamp() {
-  if (getRightPos() && pnumaticDelayRear > 20) {
+  if (getL2Pos() && pnumaticDelayRear > 20) {
     rearClamp.set(!rearClamp.value());
     pnumaticDelayRear = 0;
     //thread check(rearClampCheck);
@@ -194,7 +187,7 @@ void rearClampCheck() {
 }
 
 void setFrontClamp() {
-  if ((getR1Pos() && pnumaticDelayFront > 20)) {
+  if ((getL1Pos() && pnumaticDelayFront > 20)) {
     frontClamp.set(!frontClamp.value());
     pnumaticDelayFront = 0;
   } else {
@@ -208,10 +201,10 @@ int getFourBarSpeed() {
   int potVal = getFourBarPot();
   int returnVal = getAxis2Pos();
   if (returnVal > 0)
-    return returnVal > upperBound - potVal ? 1.5 * (upperBound - potVal)
+    return returnVal > upperBound - potVal ? 1 * (upperBound - potVal)
                                            : returnVal;
   else if (returnVal < 0)
-    return returnVal < lowerBound - potVal ? 2 * (lowerBound - potVal)
+    return returnVal < lowerBound - potVal ? 1 * (lowerBound - potVal)
                                            : returnVal;
   else
     return 0;
