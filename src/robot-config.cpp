@@ -32,11 +32,12 @@ digital_out rearClamp = digital_out(Expander.C);
 digital_out frontClamp = digital_out(Brain.ThreeWirePort.A);
 
 limit rearClampLimit = limit(Brain.ThreeWirePort.B);
+limit rearGoalLimit = limit(Brain.ThreeWirePort.E);
 
 pot fourBarPot = pot(Expander.D);
 
-line rearRingCheck = line(Brain.ThreeWirePort.E);
 line frontLineTracker = line(Brain.ThreeWirePort.F);
+line intakeLineTracker = line(Brain.ThreeWirePort.H);
 
 sonar rearSonar = sonar(Brain.ThreeWirePort.C);
 

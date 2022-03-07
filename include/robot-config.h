@@ -35,11 +35,12 @@ extern digital_out rearClamp;
 extern digital_out frontClamp;
 
 extern limit rearClampLimit;
+extern limit rearGoalLimit;
 
 extern pot fourBarPot;
 
-extern line rearRingCheck;
 extern line frontLineTracker;
+extern line intakeLineTracker;
 
 extern sonar rearSonar;
 

@@ -1,8 +1,8 @@
 #include "vex.h"
 
 const int lowerBound = 1450;
-const int ringHeight = 1650;
-const int seasawHeight = 2285;
+//const int ringHeight = 1650;
+//const int seasawHeight = 2285;
 const int upperBound = 2520;
 
 const int armBoundsDeg = 1270;
@@ -29,6 +29,7 @@ bool macroRun = false;
 bool intakeOverride = false;
 bool intakeState = false;
 bool runIntake = false;
+bool calibrated = false;
 
 int liftControl() {
   fourBar.setBrake(coast);
@@ -47,25 +48,13 @@ void setFourBarSpeed(int speed) {
 }
 
 void setFourBarSpeedHolding(int speed) {
-  if (macroDelay > 50) {
-    if (getBPos()) {
-      fourBarGround();
-      macroDelay = 0;
-      return;
-    } else if (getAPos()) {
-      fourBarRing();
-      macroDelay = 0;
-      return;
-    } else if (getXPos()) {
-      fourBarSeasaw();
-      macroDelay = 0;
-      return;
-    }
-  } else{
-    macroDelay++;
+  if (getBPos()) {
+    lastPos = bottomBoundFourBar;
+  } else if (getAPos()) {
+    lastPos = ringHeightDeg;
+  } else if (getXPos()) {
+    lastPos = seesawHeightDeg;
   }
-  if (macroRun)
-    return;
   if (speed != 0) {
     setFourBarSpeed(speed);
     lastPos = getFourBarCurPos();
@@ -75,7 +64,7 @@ void setFourBarSpeedHolding(int speed) {
 }
 
 void setFourBarPosition(int pos) {
-  setFourBarSpeed(1.25 * (pos - getFourBarCurPos()));
+  setFourBarSpeed(1 * (pos - getFourBarCurPos()));
 }
 
 void setFourBarIntakeAuton() {
@@ -94,7 +83,7 @@ void setFourBarIntakeAuton() {
   }
 }
 
-void changeArmPos(int pos) { armPos = pos; }
+void changeArmPos(int pos) { armPos = pos + bottomBoundFourBar; }
 
 void intakeMove(bool start) {
   runIntake = start;
@@ -140,8 +129,7 @@ void fourBarSeasaw() {
 void setIntakeSpeed() {
   if (!intakeOverride) {
     if (rearClampLimit.pressing() && getFourBarPot() > lowerBound + 40 &&
-        (getFourBarPot() < 2200 || frontClamp.value() == 0) &&
-        rearRingCheck.value(pct) > 65) {
+        (getFourBarPot() < 2200 || frontClamp.value() == 0)) {
       intake.spin(fwd, 12, volt);
     } else {
       intake.stop();
@@ -258,14 +246,18 @@ bool buttonPressed() {
 }
 
 void findBottomBound() {
-  do {
-    fourBar.spin(fwd, -5, volt);
-    wait(200, msec);
-  } while (fourBar.torque() < 0.8 && fabs(fourBar.velocity(pct)) > 10);
-  fourBar.stop();
-  bottomBoundFourBar = getFourBarCurPos() + 35;
-  topBoundFourBar = bottomBoundFourBar + armBoundsDeg;
-  ringHeightDeg = bottomBoundFourBar + ringHeightDiff;
-  seesawHeightDeg = bottomBoundFourBar + seasawHeightDiff;
-  lastPos = bottomBoundFourBar;
+  if (!calibrated) {
+    do {
+      fourBar.spin(fwd, -5, volt);
+      wait(200, msec);
+    } while (fourBar.torque() < 0.8 && fabs(fourBar.velocity(pct)) > 10);
+    fourBar.stop();
+    bottomBoundFourBar = getFourBarCurPos() + 35;
+    topBoundFourBar = bottomBoundFourBar + armBoundsDeg;
+    ringHeightDeg = bottomBoundFourBar + ringHeightDiff;
+    seesawHeightDeg = bottomBoundFourBar + seasawHeightDiff;
+    lastPos = bottomBoundFourBar;
+    armPos = bottomBoundFourBar;
+    calibrated = true;
+  }
 }

@@ -1,7 +1,7 @@
 #include "vex.h"
 
 const int centerX = 165;
-const int centerTol = 30;
+const int centerTol = 20;
 
 void findFrontGoal(color col, signature sig, int basespeed, bool right,
                    bool check, bool risk) {
@@ -70,11 +70,11 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
 
 void findRearGoal(color col, signature sig, int basespeed, bool right,bool check, bool risk) {
   if (col == red) {
-    frontVision.setBrightness(29);
+    rearVision.setBrightness(29);
   } else if (col == blue) {
-    frontVision.setBrightness(150);
+    rearVision.setBrightness(150);
   } else if (col == yellow) {
-    frontVision.setBrightness(12);
+    rearVision.setBrightness(12);
   }
 
   if (check) {
@@ -97,9 +97,9 @@ void findRearGoal(color col, signature sig, int basespeed, bool right,bool check
     while (test.centerX < centerX - centerTol ||
            test.centerX > centerX + centerTol) {
       if (test.centerX < centerX - centerTol) {
-        setDrivetrainSpeed(-4, 4);
+        setDrivetrainSpeed(-3, 3);
       } else if (test.centerX > centerX + centerTol) {
-        setDrivetrainSpeed(4, -4);
+        setDrivetrainSpeed(3, -3);
       }
       wait(20, msec);
       rearVision.takeSnapshot(sig);
@@ -109,6 +109,9 @@ void findRearGoal(color col, signature sig, int basespeed, bool right,bool check
   int leftSpeed = -basespeed;
   int rightSpeed = -basespeed;
   int goalDist = rearSonar.distance(inches);
+  while(goalDist < 5){
+    wait(20, msec);
+  }
   while (goalDist > 9) {
     if (goalDist < 21) {
       basespeed = (goalDist) / 3;
@@ -130,7 +133,7 @@ void findRearGoal(color col, signature sig, int basespeed, bool right,bool check
     rearVision.takeSnapshot(sig);
     goalDist = rearSonar.distance(inches);
   }
-  while (!rearClampLimit.pressing()) {
+  while (!rearGoalLimit.pressing()) {
     setDrivetrainSpeed(-3, -3);
     wait(20, msec);
   }

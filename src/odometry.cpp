@@ -113,11 +113,11 @@ void drivetrainTurn(double targetdeg) {
 
    double kP = 0.20;
    double kI = 0.001;
-   double kD = 1.2;
+   double kD = 1.8;
    if (frontLineTracker.value(pct) < 60) {
-     kP = 0.77;
+     kP = 0.8;
      kI = 0.001;
-     kD = 1.7;
+     kD = 1.5;
    }
 
   // double kP = 0.55;
@@ -137,29 +137,33 @@ void drivetrainTurn(double targetdeg) {
   }*/
 
   // PID loop variables
-  double error = 1;
-  double integral = 0;
-  double derivative = 0;
-  double prevError = 0;
-  double motorPower = 0;
+  double error = 0.0;
+  double integral = 0.0;
+  double derivative = 0.0;
+  double prevError = 0.0;
+  double motorPower = 0.0;
   bool useright = true;
 
   double tempX = coor.xPos;
   double tempY = coor.yPos;
-  wait(10, msec);
+  const double minMotorPower = 2.0;
 
-  while (fabs(targetdeg - getInertialHeading()) > 0.35) {
+  while (fabs(targetdeg - getInertialHeading()) > 0.5) {
     // PID loop to determine motorPower at any given point in time
+    wait(10, msec);
     double head = getInertialHeading();
-   // printf("head %f \n", head);
+    // printf("head %f \n", head);
+
     double errorright = targetdeg - head;
     if (targetdeg < head) {
       errorright = 360 - head + targetdeg;
     }
+
     double errorleft = fabs(targetdeg - head);
     if (targetdeg > head) {
       errorleft = 360 + head - targetdeg;
     }
+
     if (errorright < errorleft) {
       error = errorright;
       useright = true;
@@ -167,20 +171,21 @@ void drivetrainTurn(double targetdeg) {
       error = errorleft;
       useright = false;
     }
+
     // pid stuff
     integral = integral + error;
-    if (error == 0 or error > targetdeg) {
-      integral = 0;
+    if ((error == 0.0) or (error > targetdeg)) {
+      integral = 0.0;
     }
     derivative = error - prevError;
     motorPower = (error * kP + integral * kI + derivative * kD);
     prevError = error;
 
-    if(motorPower < 1.9){
-      motorPower = 1.9;
+    if (motorPower < minMotorPower) {
+      motorPower = minMotorPower;
     }
 
-    wait(15, msec);
+    wait(10, msec);
 
     // powering the motors
     if (!useright) {
@@ -198,7 +203,9 @@ void drivetrainTurn(double targetdeg) {
       rightFrontDrive.spin(fwd, -motorPower, volt);
       rightBackDrive.spin(fwd, -motorPower, volt);
     }
-  }
+
+  } // end while()
+
   leftMiddleDrive.stop();
   rightMiddleDrive.stop();
   leftFrontDrive.stop();
@@ -210,6 +217,7 @@ void drivetrainTurn(double targetdeg) {
   coor.yPos = tempY;
   // printf("x: %f", coor.xPos);
   // printf("y: %f\n", coor.yPos);
+
   wait(10, msec);
 }
 /*void drivetrainTurn(double targetdeg) {

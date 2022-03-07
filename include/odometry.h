@@ -11,6 +11,7 @@ double getxPos();
 void horizontalmove();
 void stopdrive();
 void drivetrainTurn(double targetdeg);
+void turnNoPid(double deg);
 
 //debug
 void printPos();

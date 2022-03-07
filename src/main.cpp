@@ -61,7 +61,7 @@ Button autonButtons[] = {
 
 void autonomous(void) {
   switch (autonToRun) {
-  case 0:  allianceMain();
+  case 0:  testPID();
     break;
   case 1:
     break;

@@ -1,24 +1,32 @@
 #include "vex.h" 
 
 void allianceMain() {
+  /*while(true){
+    Controller.Screen.clearLine();
+    Controller.Screen.print(rearSonar.distance(inches));
+    wait(20, msec);
+  }*/
   thread odometry(getPos);
-  thread lifts(setFourBarIntakeAuton);
-
   setDrivetrainLock();
-
+  thread calib(findBottomBound);
   thread  clamp(setFrontClampAuton);
   timer test;
   findFrontGoal(yellow, YELLOWGOAL, 12, true, false, true);
   setFrontClampAuton();
+  wait(200, msec);
   Controller.Screen.print(test.time(sec));
-  backUpSonar(35, 12);
-  changeArmPos(1700);
-  findRearGoal(red, REDGOAL, 7, false, true, false);
-  setRearClamp();
+  thread lifts(setFourBarIntakeAuton);
+  backUpSonar(45, 12);
+  changeArmPos(300);
+  findRearGoal(red, REDGOAL, 5, false, true, false);
+  setRearClampAuton();
+  drivetrainTurn(270);
   wait(200, sec);
+  intakeMove(true);
+  driveProfile(40, 10, true);
 
 
-  odometry.interrupt();
+  //odometry.interrupt();
   //lifts.interrupt();
   fourBar.stop();
 }
@@ -125,3 +133,12 @@ void skillsBackup() {
   fourBar.stop();
 }
 
+void testPID() {
+  calibrateInertial();
+  resetEncoders();
+  setDrivetrainLock();
+  printf("inertial start: %f\n", getInertialHeading());
+  drivetrainTurn(180);
+  wait(2000, msec);
+  printf("inertial: %f\n", getInertialHeading());
+}
