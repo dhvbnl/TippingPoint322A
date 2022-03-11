@@ -23,7 +23,7 @@ motor intake = motor(PORT8, ratio18_1, true);
 
 inertial inert = inertial(PORT9);
 
-triport Expander = triport(PORT12);
+triport Expander = triport(PORT13);
 
 encoder verticalTracker = encoder(Expander.A);
 encoder horizontalTracker = encoder(Expander.E);
