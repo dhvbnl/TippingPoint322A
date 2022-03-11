@@ -2,8 +2,8 @@
 
 // Global constants
 //const double errorMargin = 0.01;
-const double V_trackWidth = 2.25;
-const double H_trackWidth = 2.60;
+const double V_trackWidth = 1.5;
+const double H_trackWidth = 2.50;
 
  struct Coordinate {
    double xPos;
@@ -17,10 +17,8 @@ const double H_trackWidth = 2.60;
 } coor; 
 
 void horizontalmove() {
-  //double refAngle;
-  //double headingDeg = (coor.clockwiseHeadRad) * (180 / M_PI);
-  //int dir = 0;
   double radius; double linearDistance;
+  double deltaX; double deltaY;
       
       // Calculate the incremental linear distance traveled.
     if (fabs(coor.deltaHeading) < 0.01)
@@ -34,72 +32,21 @@ void horizontalmove() {
     }
 
     // Calculate the incremental 2-dimensional coordinates x & y
-    double deltaX = linearDistance * cos(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
-    double deltaY = linearDistance * sin(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
+    deltaX = linearDistance * cos(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
+    deltaY = linearDistance * sin(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
+
+  // coor.deltaH = coor.deltaH - H_trackWidth * coor.deltaHeading;
+
+  // if (fabs(coor.deltaHeading) <= 0.5) {
+  //   deltaX = coor.deltaH;
+  // }
+  // else {
+  //   deltaX = (2 * sin(coor.deltaH / 2)) * (coor.deltaH/coor.deltaHeading + H_trackWidth);
+  //   deltaY = (2 * sin(coor.deltaH/2))*(deltaRight/deltaTheta +V_trackWidth);
+  // }
     coor.xPos +=deltaX;
     coor.yPos += deltaY;
 
-  /* if (headingDeg < 90) { // Quad 1
-    refAngle  = headingDeg;
-    dir = 1;
-  } 
-  else if (headingDeg < 180) { // Quad 4
-    refAngle = 180 - headingDeg;
-    dir = 2;
-  } 
-  else if (headingDeg < 270) { // Quad 3
-    refAngle = headingDeg - 180;
-    dir = 3;
-  } 
-  else {
-    refAngle = 360 - headingDeg; // Quad 2
-    dir = 4;
-  }
-  
-  double deltaX = cos(refAngle * M_PI / 180) * fabs(coor.deltaH);
-  double deltaY = sin(refAngle * M_PI / 180) * fabs(coor.deltaH); 
-
-  //if (coor.deltaH > 0) { // moving right (positive direction)
-  if (getHorizontalEncoderRotation() > 0) 
-  {
-    if (dir == 1) { 
-      coor.xPos += deltaX;
-      coor.yPos -= deltaY;
-    } 
-    else if (dir == 2) { 
-      coor.xPos -= deltaX;
-      coor.yPos -= deltaY;
-    } 
-    else if (dir == 3) {
-      coor.xPos -= deltaX;
-      coor.yPos += deltaY;
-    } 
-    else {
-      coor.xPos += deltaX;
-      coor.yPos += deltaY;
-    }
-  } 
-  else 
-  { // moving left (negative direction)
-    if (dir == 1) {
-      coor.xPos -= deltaX;
-      coor.yPos += deltaY;
-    } 
-    else if (dir == 2) {
-      coor.xPos += deltaX;
-      coor.yPos += deltaY;
-    } 
-    else if (dir == 3) {
-      coor.xPos += deltaX;
-      coor.yPos -= deltaY;
-    } 
-    else {
-      coor.xPos -= deltaX;
-      coor.yPos -= deltaY;
-    }
-  } */
-  //printf("x: %f\n", deltaX);
-  //printf("y: %f\n", deltaY);
   wait(100, msec);
 }
 
@@ -110,15 +57,19 @@ void drivetrainTurn(double targetdeg) {
   // double kP = 0.388;
   // double kI = .00001;
   // double kD = 0.12;
+//last working variation (volts, no velocity check)
+  //  double kP = 0.21;
+  //  double kI = 0.001;
+  //  double kD = 1.8;
+  //  if (frontLineTracker.value(pct) < 60) {
+  //    kP = 0.8;
+  //    kI = 0.001;
+  //    kD = 1.5;
+  //  }
 
-   double kP = 0.20;
-   double kI = 0.001;
-   double kD = 1.8;
-   if (frontLineTracker.value(pct) < 60) {
-     kP = 0.8;
-     kI = 0.001;
-     kD = 1.5;
-   }
+  double kP = 0.7;
+  double kI = 0.003;
+  double kD = 1.5;
 
   // double kP = 0.55;
   // double kI = 0.005;
@@ -136,6 +87,9 @@ void drivetrainTurn(double targetdeg) {
     kD = 1.2;
   }*/
 
+  double tempX = coor.xPos;
+  double tempY = coor.yPos;
+
   // PID loop variables
   double error = 0.0;
   double integral = 0.0;
@@ -143,14 +97,16 @@ void drivetrainTurn(double targetdeg) {
   double prevError = 0.0;
   double motorPower = 0.0;
   bool useright = true;
-
-  double tempX = coor.xPos;
-  double tempY = coor.yPos;
-  const double minMotorPower = 2.0;
-
-  while (fabs(targetdeg - getInertialHeading()) > 0.5) {
+  double avgvel = 0;
+  double speed;
+  const double minMotorPower = 2.5;
+  double changevel = 2.5;
+  int x = 0;
+  while (fabs(targetdeg - getInertialHeading()) > 1) {
     // PID loop to determine motorPower at any given point in time
-    wait(10, msec);
+    x++;
+    avgvel = (fabs(leftFrontDrive.velocity(pct)) + fabs(rightFrontDrive.velocity(pct))) / 2;
+    
     double head = getInertialHeading();
     // printf("head %f \n", head);
 
@@ -173,20 +129,29 @@ void drivetrainTurn(double targetdeg) {
     }
 
     // pid stuff
+    
     integral = integral + error;
     if ((error == 0.0) or (error > targetdeg)) {
       integral = 0.0;
     }
     derivative = error - prevError;
-    motorPower = (error * kP + integral * kI + derivative * kD);
+    
+    speed = (error * kP + integral * kI + derivative * kD);
+    motorPower = speed;
+    if (avgvel < speed) {
+      motorPower += (speed - avgvel) * changevel;
+    } else if (avgvel > speed) {
+      motorPower -= (avgvel - speed) * changevel;
+    } 
+
+    motorPower = motorPower * 12/100;
     prevError = error;
 
     if (motorPower < minMotorPower) {
       motorPower = minMotorPower;
     }
 
-    wait(10, msec);
-
+  
     // powering the motors
     if (!useright) {
       leftFrontDrive.spin(fwd, -motorPower, volt);
@@ -203,6 +168,7 @@ void drivetrainTurn(double targetdeg) {
       rightFrontDrive.spin(fwd, -motorPower, volt);
       rightBackDrive.spin(fwd, -motorPower, volt);
     }
+    wait(10, msec);
 
   } // end while()
 
@@ -212,13 +178,12 @@ void drivetrainTurn(double targetdeg) {
   rightFrontDrive.stop();
   rightBackDrive.stop();
   leftBackDrive.stop();
-
+  
   coor.xPos = tempX;
   coor.yPos = tempY;
   // printf("x: %f", coor.xPos);
   // printf("y: %f\n", coor.yPos);
 
-  wait(10, msec);
 }
 /*void drivetrainTurn(double targetdeg) {
    // proportionality constants
@@ -374,6 +339,8 @@ int setPos (double x, double y, double speed, bool fwd) {
     //Controller.Screen.print("here");
     //printf(" refAng: %f", refAngle);
     driveProfile(hyp, speed, fwd);
+    printf("x: %f", coor.xPos);
+    printf("y: %f\n", coor.yPos);
     // if (endHeading < 360) {
     //   drivetrainTurn(endHeading);
     // }
@@ -463,6 +430,103 @@ int getPos()
   return 0;
 }
 
+int getPosition() {
+  const double verticalRad = 1.25;
+  const double horizRad = 3.0;
+  const double verticaldisp = 1.25;
+  const double horizdisp = 2.0;
+
+  double currentHoriz = 0.0;
+  double previousHoriz = 0.0;
+  double currentVertical = 0.0;
+  double previousVertical = 0.0;
+  double deltaEnVertical = 0.0;
+  double deltaEnHoriz = 0.0;
+
+  double deltaX = 0.0;
+  double deltaY = 0.0;
+  double radius = 0.0;
+  double prevHeadRad = 0.0;
+  double inertialHead = 0.0;
+
+  double verticalArcRad = 0.0;
+  double linearDistanceVertical = 0.0;
+  double horizArcRad = 0.0;
+  double linearDistanceHorizontal = 0.0;
+
+  coor.deltaHeading = 0.0;
+  coor.clockwiseHeadRad = 0.0; // heading by clockwise angle
+  coor.headingRad = 0.0;
+  coor.linearDistance = 0.0;
+  coor.xPos = 0;
+  coor.yPos = 0;
+  double iter = 0;
+
+  while (true)
+  {
+      // Reading the odometry encoders
+      currentVertical = getVerticalEncoderRotation() * convertInches; 
+      currentHoriz = getHorizontalEncoderRotation() * convertInches;
+
+      // Inertial-based heading reading in radians
+      inertialHead = getInertialHeading();
+      coor.headingRad = inertialHead * (M_PI / 180);
+      // coor.clockwiseHeadRad = coor.headingRad;
+
+      // Convert head from clockwise angle to counterclockwise (unit circle-based) angle
+      coor.headingRad = fmod(((2.5 * M_PI) - coor.headingRad), (2 * M_PI)); 
+
+      if (!(iter == 0)) {
+        coor.deltaHeading = coor.headingRad - prevHeadRad; // change in heading using inertial sensor readings
+      }
+
+      // arc lengths - with correction of location of tracking wheels
+      deltaEnVertical = (currentVertical - previousVertical);
+      deltaEnHoriz = (currentHoriz- previousHoriz);
+      // deltaEnVertical = (currentVertical - previousVertical) - (verticalRad * coor.deltaHeading);
+      // deltaEnHoriz = (currentHoriz- previousHoriz) - (horizRad * coor.deltaHeading);
+
+      // Calculate the incremental linear distance traveled.
+      if (fabs(coor.deltaHeading) < 0.01)
+      {
+        linearDistanceVertical = deltaEnVertical;
+        linearDistanceHorizontal = deltaEnHoriz;
+      }
+      else
+      {
+        verticalArcRad = (deltaEnVertical / coor.deltaHeading) - verticaldisp;
+        linearDistanceVertical = 2.0 * verticalArcRad * sin(coor.deltaHeading / 2.0);
+
+
+        horizArcRad = (deltaEnHoriz / coor.deltaHeading) + horizdisp;
+        linearDistanceHorizontal = 2.0 * horizArcRad * sin(coor.deltaHeading / 2.0);
+      }
+
+      deltaY = linearDistanceVertical * sin(coor.headingRad + (coor.deltaHeading / 2.0));
+      deltaX = linearDistanceHorizontal * cos(2 * M_PI - (M_PI / 2 - coor.headingRad + coor.deltaHeading / 2.0));
+
+      coor.xPos += deltaX; 
+      coor.yPos += deltaY;
+      wait(100, msec);
+      previousVertical = currentVertical;
+      previousHoriz = currentHoriz;
+      prevHeadRad = coor.headingRad;
+
+      //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
+       printf("x: %f", coor.xPos);
+       printf("y: %f\n", coor.yPos);
+      //printf("%f\n", coor.headingRad);
+
+      wait(100, msec); 
+      //Brain.Screen.clearLine();
+      iter++;
+    }
+
+  return 0;
+}
+
+
+
 void hi() {
   horizontalTracker.resetRotation();
   horizontalTracker.setRotation(0, deg);
@@ -475,6 +539,23 @@ void printinertial() {
     printf("print inertial %f \n", getInertialHeading());
     wait(100, msec);
   }
+}
+void arcturn (double left, double right, double turnangle) {
+  while (getInertialHeading() < turnangle - 2 || getInertialHeading() > turnangle + 2) {
+    leftFrontDrive.spin(fwd, left, volt);
+    leftMiddleDrive.spin(fwd, left, volt);
+    leftBackDrive.spin(fwd, left, volt);
+    rightFrontDrive.spin(fwd, right, volt);
+    rightMiddleDrive.spin(fwd, right, volt);
+    rightBackDrive.spin(fwd, right, volt);
+    wait(10, msec);
+  }
+  leftFrontDrive.stop();
+  leftMiddleDrive.stop();
+  leftBackDrive.stop();
+  rightFrontDrive.stop();
+  rightMiddleDrive.stop();
+  rightBackDrive.stop();
 }
 
 void turnNoPid(double deg) {
@@ -503,61 +584,3 @@ void stopdrive() {
   leftBackDrive.stop();
 }
 
-void test3() {
-  timer test;
-  thread lifts(setFourBarIntakeAuton);
-  // setDrivetrainLock();
-  // findFrontGoal(yellow, YELLOWGOAL, 12, true, true, false);
-  // backUpSonar(15, 12);
-  // findRearGoal(red, REDGOAL, 7, false, true, false);
-  // Controller.Screen.print(test.time(sec));
-  // wait(100, sec);
-  thread p(printinertial);
-
-
-  setDrivetrainLock();
-  resetEncoders();
-  calibrateInertial();
-  wait(200, msec);
-
- 
- //driveProfile(20, 9, false);
-  setFrontClampAuton();
-  wait(2000, msec);
-  setRearClampAuton();
-  wait(200, msec);
-  setFrontClampAuton();
-  wait(1000, msec);
-  changeArmPos(2285);
-  wait(1000, msec);
-  drivetrainTurn(90);
-  printf("turn done %f \n", getInertialHeading());
-  leftMiddleDrive.stop();
-  rightMiddleDrive.stop();
-  leftFrontDrive.stop();
-  rightFrontDrive.stop();
-  rightBackDrive.stop();
-  leftBackDrive.stop();
-  wait(2000, msec);
-  // wait(1000, msec);
-  // drivetrainTurn(120);
-  // printf("print inertial %f \n", getInertialHeading());
-  // wait(1000, msec);
-  // drivetrainTurn(280);
-  // printf("print inertial %f \n", getInertialHeading());
-  // wait(1000, msec);
-  // drivetrainTurn(0);
-  // printf("print inertial %f \n", getInertialHeading());
-  // wait(1000, msec);
-
-  // // drivetrainTurn(90);
-  // wait(500, msec);
-  //setPos(10, 0, 8, true);
-  
- // printf("inertial %f\n", getInertialHeading());
-
-  // while (true) {
-  //   printPos();
-  //   wait(10, msec);
-  // }
-}

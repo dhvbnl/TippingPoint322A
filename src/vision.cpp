@@ -12,6 +12,7 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
   } else if (col == yellow) {
     frontVision.setBrightness(12);
   }
+  frontVision.takeSnapshot(sig);
   if (check) {
     if (right) {
       setDrivetrainSpeed(4.5, -4.5);
@@ -41,17 +42,17 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
 
   int leftSpeed = basespeed;
   int rightSpeed = basespeed;
-  while (test.centerY < 160) {
-    if (test.centerY > 130) {
-      basespeed = (160 - test.centerY) / 8 + 3;
+  while (test.centerY < 140) {
+    if (test.centerY > 125) {
+      basespeed = (140 - test.centerY) / 8 + 3;
     }
     if (test.centerY < centerX) {
       if (test.centerX < centerX) {
         rightSpeed = basespeed;
-        leftSpeed = basespeed + (test.centerX - centerX) * 0.07;
+        leftSpeed = basespeed + (test.centerX - centerX) * 0.1;
       } else {
         leftSpeed = basespeed;
-        rightSpeed = basespeed - (test.centerX - centerX) * 0.07;
+        rightSpeed = basespeed - (test.centerX - centerX) * 0.1;
       }
     } else {
       leftSpeed = basespeed;
@@ -62,7 +63,7 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
     frontVision.takeSnapshot(sig);
   }
   while (frontLineTracker.value(pct) > 60) {
-    setDrivetrainSpeed(4.5, 4.5);
+    setDrivetrainSpeed(3, 3);
     wait(20, msec);
   }
   setDrivetrainSpeed(0, 0);
@@ -76,7 +77,8 @@ void findRearGoal(color col, signature sig, int basespeed, bool right,bool check
   } else if (col == yellow) {
     rearVision.setBrightness(12);
   }
-
+  
+  frontVision.takeSnapshot(sig);
   if (check) {
     if (right) {
       setDrivetrainSpeed(4.5, -4.5);

@@ -219,7 +219,7 @@ int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation fl
   rightBackDrive.stop();
   leftBackDrive.stop();
   wait(100, msec);
-  printf("done with motion profile");
+  //printf("done with motion profile");
   return 0;
 }
 

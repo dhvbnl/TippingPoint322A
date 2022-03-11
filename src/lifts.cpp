@@ -28,12 +28,13 @@ thread macro;
 bool macroRun = false;
 bool intakeOverride = false;
 bool intakeState = false;
-bool runIntake = false;
+int runIntake = 0;
 bool calibrated = false;
 
 int liftControl() {
   fourBar.setBrake(coast);
   findBottomBound();
+  lastPos = getFourBarCurPos();
   while (true) {
     setFourBarSpeedHolding(getFourBarSpeed());
     setIntakeSpeed();
@@ -70,12 +71,22 @@ void setFourBarPosition(int pos) {
 void setFourBarIntakeAuton() {
   while (taskStop()) {
     setFourBarPosition(armPos);
-    if (runIntake) {
+    if (runIntake == 1) {
       intake.spin(fwd, 12, volt);
       if (intakeDelay > 15 && intake.velocity(pct) < 10) {
-        runIntake = false;
+        runIntake = 0;
       }
       intakeDelay++;
+    } else if (runIntake == 2) {
+      intake.spin(fwd, -12, volt);
+      wait(300, msec);
+      runIntake = 3;
+    } else if (runIntake == 3) {
+      while(intakeLineTracker.value(pct) > 40){
+        intake.spin(fwd, 12, volt);
+        wait(20, msec);
+      }
+      runIntake = 0;
     } else {
       intake.stop();
     }
@@ -85,7 +96,7 @@ void setFourBarIntakeAuton() {
 
 void changeArmPos(int pos) { armPos = pos + bottomBoundFourBar; }
 
-void intakeMove(bool start) {
+void intakeMove(int start) {
   runIntake = start;
   intakeDelay = 0;
 }
@@ -128,8 +139,8 @@ void fourBarSeasaw() {
 
 void setIntakeSpeed() {
   if (!intakeOverride) {
-    if (rearClampLimit.pressing() && getFourBarPot() > lowerBound + 40 &&
-        (getFourBarPot() < 2200 || frontClamp.value() == 0)) {
+    if (rearClampLimit.pressing() && getFourBarCurPos() > bottomBoundFourBar + 250 &&
+        (getFourBarCurPos() < 1000 || frontLineTracker.value(pct) > 60)) {
       intake.spin(fwd, 12, volt);
     } else {
       intake.stop();

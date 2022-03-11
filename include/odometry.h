@@ -16,5 +16,6 @@ void turnNoPid(double deg);
 //debug
 void printPos();
 void hi();
-void test3();
+
 void printinertial();
+void arcturn (double left, double right, double turnangle);

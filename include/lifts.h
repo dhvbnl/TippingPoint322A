@@ -2,6 +2,7 @@
 const int tBondRearLift = 11;
 const int bBondRearLift = 40;
 
+
 int liftControl();
 
 void setFourBarSpeed(int speed);
@@ -23,7 +24,7 @@ void setFrontClampAuton();
 void rearClampCheck();
 
 void setIntakeSpeed();
-void intakeMove(bool start);
+void intakeMove(int start);
 
 int getFourBarSpeed();
 int getFourBarPos();
