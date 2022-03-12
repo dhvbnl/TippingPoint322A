@@ -3,14 +3,19 @@
 const int centerX = 165;
 const int centerTol = 20;
 
+//home
+const int redBrightness = 29;
+const int blueBrightness = 150;
+const int yellowBrightness = 12;
+
 void findFrontGoal(color col, signature sig, int basespeed, bool right,
                    bool check, bool risk) {
   if (col == red) {
-    frontVision.setBrightness(29);
+    frontVision.setBrightness(redBrightness);
   } else if (col == blue) {
-    frontVision.setBrightness(150);
+    frontVision.setBrightness(blueBrightness);
   } else if (col == yellow) {
-    frontVision.setBrightness(12);
+    frontVision.setBrightness(yellowBrightness);
   }
   frontVision.takeSnapshot(sig);
   if (check) {
@@ -71,11 +76,11 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
 
 void findRearGoal(color col, signature sig, int basespeed, bool right,bool check, bool risk) {
   if (col == red) {
-    rearVision.setBrightness(29);
+    rearVision.setBrightness(redBrightness);
   } else if (col == blue) {
-    rearVision.setBrightness(150);
+    rearVision.setBrightness(blueBrightness);
   } else if (col == yellow) {
-    rearVision.setBrightness(12);
+    rearVision.setBrightness(yellowBrightness);
   }
   
   frontVision.takeSnapshot(sig);

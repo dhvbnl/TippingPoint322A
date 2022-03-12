@@ -41,6 +41,7 @@ line intakeLineTracker = line(Brain.ThreeWirePort.H);
 
 sonar rearSonar = sonar(Brain.ThreeWirePort.C);
 
+//home values
 signature REDGOAL = signature (1, 10267, 11207, 10736, -835, -387, -610, 11, 0);
 signature YELLOWGOAL = signature (2, 2057, 2409, 2234, -3213, -2875, -3044, 9.2, 0);
 signature BLUEGOAL = signature (3, -2759, -2009, -2384, 11045, 12621, 11834, 4.5, 0);

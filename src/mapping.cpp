@@ -154,7 +154,7 @@ void skills(){
   setFrontClampAuton();
   wait(100, msec);
   changeArmPos(1100); //2285
-  intakeMove(true);
+  intakeMove(1);
   
   setPos(74, -36, 7, true);
 
@@ -195,6 +195,7 @@ void skills(){
   wait(100, msec);
   findFrontGoal(yellow, YELLOWGOAL, 7, true, true, false);
   setFrontClampAuton();
+  intakeMove(1);
   changeArmPos(300);
   drivetrainTurn(230);
   timeDrive(7, 2000);
