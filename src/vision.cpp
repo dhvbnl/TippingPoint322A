@@ -4,10 +4,14 @@ const int centerX = 165;
 const int centerTol = 20;
 
 //home
-const int redBrightness = 29;
-const int blueBrightness = 150;
-const int yellowBrightness = 12;
+//const int redBrightness = 29;
+//const int blueBrightness = 150;
+//const int yellowBrightness = 12;
 
+//comp
+const int redBrightness = 50;
+const int blueBrightness = 80;
+const int yellowBrightness = 25;
 void findFrontGoal(color col, signature sig, int basespeed, bool right,
                    bool check, bool risk) {
   if (col == red) {
@@ -48,10 +52,10 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
   int leftSpeed = basespeed;
   int rightSpeed = basespeed;
   while (test.centerY < 140) {
-    if (test.centerY > 125) {
+    if (test.centerY > 120) {
       basespeed = (140 - test.centerY) / 8 + 3;
     }
-    if (test.centerY < centerX) {
+    if (test.centerY < 165) {
       if (test.centerX < centerX) {
         rightSpeed = basespeed;
         leftSpeed = basespeed + (test.centerX - centerX) * 0.1;

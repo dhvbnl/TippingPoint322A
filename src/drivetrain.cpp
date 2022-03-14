@@ -180,7 +180,7 @@ void waitCalibrate(){
 }
 
 //checks tempeatures of all drive motors are returns in a string which motors are hot
-std::string tempInfoDrive() {
+/*std::string tempInfoDrive() {
   std::string tempReturn;
   int loopCounter = 0;
   if (getLeftBackTemp() > tempLimit)
@@ -204,7 +204,7 @@ std::string tempInfoDrive() {
   if(loopCounter == 0)
     tempReturn = "All Good";
   return tempReturn;
-}
+}*/
 
 
 

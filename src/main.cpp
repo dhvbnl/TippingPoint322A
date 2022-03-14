@@ -73,10 +73,10 @@ void autonomous(void) {
       allianceRightNeutral(red, REDGOAL);
       break;
     case 2:
-      allianceMiddleNeutral(red, REDGOAL);
+      allianceLeftNeutral(red, REDGOAL);
       break;
     case 3:
-      allianceLeftNeutral(red, REDGOAL);
+      allianceMiddleNeutral(red, REDGOAL);
       break;
     case 4: // code
       break;
@@ -97,10 +97,10 @@ void autonomous(void) {
       allianceRightNeutral(blue, BLUEGOAL);
       break;
     case 2:
-      allianceMiddleNeutral(blue, BLUEGOAL);
+      allianceLeftNeutral(blue, BLUEGOAL);
       break;
     case 3:
-      allianceLeftNeutral(blue, BLUEGOAL);
+      allianceMiddleNeutral(blue, BLUEGOAL);
       break;
     case 4: // code
       break;

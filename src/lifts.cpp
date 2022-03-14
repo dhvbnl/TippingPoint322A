@@ -19,7 +19,7 @@ int lastPos = lowerBound;
 int holdDelayFourBar = 0;
 int macroDelay;
 
-int bottomBoundFourBar;
+int bottomBoundFourBar = -1;
 int topBoundFourBar;
 int ringHeightDeg;
 int seesawHeightDeg;
@@ -27,13 +27,19 @@ int seesawHeightDeg;
 thread macro;
 bool macroRun = false;
 bool intakeOverride = false;
-bool intakeState = false;
+int intakeState = 0;
 int runIntake = 0;
 bool calibrated = false;
+int intakeSpeed = 0;
+
+int calibrateDelay = 0;
 
 int liftControl() {
   fourBar.setBrake(coast);
-  findBottomBound();
+  //findBottomBound();
+  if (bottomBoundFourBar == -1){
+    findBottomBound();
+  }
   lastPos = getFourBarCurPos();
   while (true) {
     setFourBarSpeedHolding(getFourBarSpeed());
@@ -55,6 +61,12 @@ void setFourBarSpeedHolding(int speed) {
     lastPos = ringHeightDeg;
   } else if (getXPos()) {
     lastPos = seesawHeightDeg;
+  }
+  if(getUpPos() && calibrateDelay){
+    findBottomBound();
+    calibrateDelay = 0;
+  } else{
+    calibrateDelay++;
   }
   if (speed != 0) {
     setFourBarSpeed(speed);
@@ -139,20 +151,22 @@ void fourBarSeasaw() {
 
 void setIntakeSpeed() {
   if (!intakeOverride) {
-    if (rearClampLimit.pressing() && getFourBarCurPos() > bottomBoundFourBar + 250 &&
-        (getFourBarCurPos() < 1000 || frontLineTracker.value(pct) > 60)) {
-      intake.spin(fwd, 12, volt);
+    if (rearClampLimit.pressing() && (getFourBarCurPos() > bottomBoundFourBar + 100 && !(getFourBarCurPos() > topBoundFourBar - 100 && frontLineTracker.value(pct) < 60))) {
+      intakeSpeed = 12;
     } else {
-      intake.stop();
+      intakeSpeed = 0;
     }
   } else {
     if (getR1Pos() && intakeDelay > 20) {
-      if (!intakeState) {
-        intake.spin(fwd, 12, volt);
-        intakeState = true;
-      } else {
-        intake.stop();
-        intakeState = false;
+      if (intakeState == 0) {
+        intakeSpeed = 12;
+        intakeState = 1;
+      } else if(intakeState == 1){
+        intakeSpeed = -12;
+        intakeState = 2;
+      } else if(intakeState == 2){
+        intakeSpeed = 0;
+        intakeState = 0;
       }
       intakeDelay = 0;
     } else {
@@ -162,23 +176,14 @@ void setIntakeSpeed() {
 
   if (getR2Pos() && intakeDelay > 20) {
     intakeOverride ^= true;
-    intake.spin(fwd, intake.isSpinning() ? 0 : 12, volt);
+    intakeSpeed = 0;
     intakeDelay = 0;
+    intakeState = 0;
   } else {
     intakeDelay++;
   }
-  /*if (getAPos() && intakeDelay > 20) {
-    if (!intakeState && rearClampLimit.pressing()) {
-      intake.spin(fwd, 12, volt);
-      intakeState = true;
-    } else {
-      intake.stop();
-      intakeState = false;
-    }
-    intakeDelay = 0;
-  } else {
-    intakeDelay++;
-  }*/
+  
+  intake.spin(fwd, intakeSpeed, volt);
 }
 
 void setRearClamp() {
@@ -257,10 +262,9 @@ bool buttonPressed() {
 }
 
 void findBottomBound() {
-  if (!calibrated) {
     do {
-      fourBar.spin(fwd, -5, volt);
-      wait(200, msec);
+      fourBar.spin(fwd, -3, volt);
+      wait(100, msec);
     } while (fourBar.torque() < 0.8 && fabs(fourBar.velocity(pct)) > 10);
     fourBar.stop();
     bottomBoundFourBar = getFourBarCurPos() + 35;
@@ -270,5 +274,4 @@ void findBottomBound() {
     lastPos = bottomBoundFourBar;
     armPos = bottomBoundFourBar;
     calibrated = true;
-  }
 }

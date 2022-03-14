@@ -19,6 +19,7 @@ void allianceMain(color col, signature sig) {
   thread lifts(setFourBarIntakeAuton);
   backUpSonar(35, 12);
   changeArmPos(400);
+  drivetrainTurn(320);
   findRearGoal(col, sig, 5, false, true, false);
   setRearClampAuton();
   //Controller.Screen.print(test.time(sec) );
@@ -97,8 +98,9 @@ void allianceMiddleNeutral(color col, signature sig){
   setFrontClampAuton();
   changeArmPos(300);
   timeDrive(-12, 700);
-  drivetrainTurn(320);
-  findRearGoal(col, sig, 7, true, true, true);
+  drivetrainTurn(300);
+  wait(500, msec);
+  findRearGoal(col, sig, 7, false, true, true);
   setRearClampAuton();
   intakeMove(true);
   drivetrainTurn(20);
@@ -119,8 +121,8 @@ void allianceLeftNeutral(color col, signature sig){
   setFrontClampAuton();
   Controller.Screen.print(test.time(sec));
   timeDrive(-12, 400);
-  timeDrive(-6, 2000);
   changeArmPos(300);
+  timeDrive(-6, 2000);
   drivetrainTurn(290);
   changeArmPos(1075);
   while(!rearGoalLimit.pressing()){
@@ -131,7 +133,7 @@ void allianceLeftNeutral(color col, signature sig){
   setRearClampAuton();
   wait(200, msec);
   intakeMove(1);
-  timeDrive(4, 200);
+  timeDrive(4, 400);
   drivetrainTurn(260);
   wait(2.5, sec);
   timeDrive(3.5, 3500);
@@ -150,6 +152,7 @@ void skills(){
   wait(100, msec);
   
   timeDrive(4, 500);
+  drivetrainTurn(80);
   findFrontGoal(yellow, YELLOWGOAL, 8, true, true, false);
   setFrontClampAuton();
   wait(100, msec);
@@ -247,7 +250,14 @@ void skills(){
   intakeMove(0);
   setFrontClampAuton();
   wait(500, msec);
-  timeDrive(-7, 3000);
+  changeArmPos(1100);
+  timeDrive(-8, 2000);
+  wait(500, msec);
+  drivetrainTurn(315);
+  timeDrive(5, 1500);
+  setFrontClampAuton();
+  wait(200, msec);
+  timeDrive(-5, 500);
   //get center goal
   
   odometry.interrupt();

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 #include "v5.h"
 #include "v5_vcs.h"
@@ -18,8 +19,6 @@
 #include "mapping.h"
 #include "main.h"
 #include "vision.h"
-
-using std::string;
 
 //global var
 //distance between tracking wheels
