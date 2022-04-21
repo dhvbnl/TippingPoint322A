@@ -135,11 +135,11 @@ double getInertialRotation() { return inert.rotation();}
 double getInertialHeading() { return inert.heading();}
 double getInertialPitch() {return inert.pitch();}
 
-double getVerticalEncoderRotation() { return -1 * verticalTracker.rotation(deg); }
+/*double getVerticalEncoderRotation() { return -1 * verticalTracker.rotation(deg); }
 double getHorizontalEncoderRotation() { return -1 * horizontalTracker.rotation(deg); }
 
 double getVerticalEncoderVelocity() { return verticalTracker.velocity(rpm); }
-double getHorizontalEncoderVelocity() { return -1 * horizontalTracker.velocity(rpm); }
+double getHorizontalEncoderVelocity() { return -1 * horizontalTracker.velocity(rpm); }*/
 
 int getLeftFrontTemp() {return leftFrontDrive.temperature(celsius);}
 int getLeftMiddleTemp() {return leftMiddleDrive.temperature(celsius);}
@@ -160,10 +160,10 @@ void resetDrivetrain() {
   rightBackDrive.resetRotation();
 }
 
-void resetEncoders() {
+/*void resetEncoders() {
   verticalTracker.resetRotation();
   horizontalTracker.resetRotation();
-}
+}*/
 
 //calibrate inertial sensor for preauton
 void calibrateInertial() {

@@ -5,14 +5,15 @@ const int lowerBound = 1450;
 //const int seasawHeight = 2285;
 const int upperBound = 2520;
 
-const int armBoundsDeg = 1270;
-const int ringHeightDiff = 300;
-const int seasawHeightDiff = 1075;
+const int armBoundsDeg = 650;
+const int ringHeightDiff = 150;
+const int seasawHeightDiff = 500;
 
 int armPos;
 
 int pnumaticDelayRear = 0;
 int pnumaticDelayFront = 0;
+int pnumaticDelayCover = 0;
 int intakeDelay = 0;
 int previousTarget = lowerBound;
 int lastPos = lowerBound;
@@ -46,15 +47,16 @@ int liftControl() {
     setIntakeSpeed();
     setRearClamp();
     setFrontClamp();
+    setGoalCover();
     wait(20, msec);
   }
 }
 
-void setFourBarSpeed(int speed) {
+void setFourBarSpeed(double speed) {
   fourBar.spin(fwd, speed / voltageConverstion, volt);
 }
 
-void setFourBarSpeedHolding(int speed) {
+void setFourBarSpeedHolding(double speed) {
   if (getBPos()) {
     lastPos = bottomBoundFourBar;
   } else if (getAPos()) {
@@ -68,7 +70,12 @@ void setFourBarSpeedHolding(int speed) {
   } else{
     calibrateDelay++;
   }
-  if (speed != 0) {
+  speed = speed + (speed * voltageConverstion - fourBar.velocity(pct));
+  if (speed > 0) {
+    
+    setFourBarSpeed(speed);
+    lastPos = getFourBarCurPos();
+  } else if(speed < 0) {
     setFourBarSpeed(speed);
     lastPos = getFourBarCurPos();
   } else {
@@ -207,10 +214,21 @@ void rearClampCheck() {
 
 void setFrontClamp() {
   if ((getL1Pos() && pnumaticDelayFront > 20)) {
+    frontClampStandoff.set(!frontClampStandoff.value());
+    wait(50, msec);
     frontClamp.set(!frontClamp.value());
     pnumaticDelayFront = 0;
   } else {
     pnumaticDelayFront++;
+  }
+}
+
+void setGoalCover(){
+  if ((getRightPos() && pnumaticDelayCover > 20)) {
+    goalCover.set(!goalCover.value());
+    pnumaticDelayCover = 0;
+  } else {
+    pnumaticDelayCover++;
   }
 }
 
@@ -263,11 +281,11 @@ bool buttonPressed() {
 
 void findBottomBound() {
     do {
-      fourBar.spin(fwd, -3, volt);
+      fourBar.spin(fwd, -7, volt);
       wait(100, msec);
-    } while (fourBar.torque() < 0.8 && fabs(fourBar.velocity(pct)) > 10);
+    } while (fourBar.torque() < 0.8);
     fourBar.stop();
-    bottomBoundFourBar = getFourBarCurPos() + 35;
+    bottomBoundFourBar = getFourBarCurPos();
     topBoundFourBar = bottomBoundFourBar + armBoundsDeg;
     ringHeightDeg = bottomBoundFourBar + ringHeightDiff;
     seesawHeightDeg = bottomBoundFourBar + seasawHeightDiff;

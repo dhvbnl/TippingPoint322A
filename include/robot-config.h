@@ -28,11 +28,13 @@ extern inertial inert;
 
 extern triport bExpander;
 
-extern encoder verticalTracker;
-extern encoder horizontalTracker;
+//extern encoder verticalTracker;
+//extern encoder horizontalTracker;
 
 extern digital_out rearClamp;
 extern digital_out frontClamp;
+extern digital_out frontClampStandoff;
+extern digital_out goalCover;
 
 extern limit rearClampLimit;
 extern limit rearGoalLimit;

@@ -5,12 +5,13 @@ void preauton() {
   //set cylinder postion
   frontVision.setLedColor(0, 0, 0);
   rearVision.setLedColor(0, 0, 0);
+  frontClampStandoff.set(1);
   rearClamp.set(1);
   frontClamp.set(0);
 
   //reset all sensors
   resetDrivetrain();
-  resetEncoders();
+  //resetEncoders();
 
   //set motor stopping type
   setDrivetrainCreep();

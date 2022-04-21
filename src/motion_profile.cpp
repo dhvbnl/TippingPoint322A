@@ -29,7 +29,7 @@ int move(double speed, bool fwd) {
   return 0;
 }
 //accelerate
-int accelerate() {
+/*int accelerate() {
   //robot current position
   double lorig = getVerticalEncoderRotation() * convertInches;
   //if the robot is going forwards
@@ -64,9 +64,9 @@ int accelerate() {
     }
   }
   return 0;
-}
+}*/
 //decelerate
-int decelerate() {
+/*int decelerate() {
   //robot current position (in inches)
   double lorig = getVerticalEncoderRotation() * convertInches;
   int n = 0;
@@ -116,11 +116,11 @@ int decelerate() {
     }
   }
   return 0;
-}
+}*/
 
 
 
-int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation flipped
+/*int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation flipped
   //Inertial.resetRotation();
   acc.dist = 0;
   double acceldist = 0;
@@ -221,6 +221,6 @@ int driveProfile(int dist, double maxspeed, bool fwd) { //encoder orientation fl
   wait(100, msec);
   //printf("done with motion profile");
   return 0;
-}
+}*/
 
 

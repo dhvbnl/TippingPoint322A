@@ -5,8 +5,8 @@ const int bBondRearLift = 40;
 
 int liftControl();
 
-void setFourBarSpeed(int speed);
-void setFourBarSpeedHolding(int speed);
+void setFourBarSpeed(double speed);
+void setFourBarSpeedHolding(double speed);
 void setFourBarPosition(int pos);
 void setFourBarIntakeAuton();
 
@@ -17,6 +17,7 @@ void fourBarSeasaw();
 
 void setRearClamp();
 void setFrontClamp();
+void setGoalCover();
 
 void setRearClampAuton();
 void setFrontClampAuton();

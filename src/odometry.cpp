@@ -338,7 +338,7 @@ int setPos (double x, double y, double speed, bool fwd) {
     Controller.Screen.clearLine();
     //Controller.Screen.print("here");
     //printf(" refAng: %f", refAngle);
-    driveProfile(hyp, speed, fwd);
+    //driveProfile(hyp, speed, fwd);
     printf("x: %f", coor.xPos);
     printf("y: %f\n", coor.yPos);
     // if (endHeading < 360) {
@@ -377,8 +377,8 @@ int getPos()
   while (true)
   {
       // Reading the odometry encoders
-      currentEn = getVerticalEncoderRotation() * convertInches; 
-      currentH = getHorizontalEncoderRotation() * convertInches;
+      //currentEn = getVerticalEncoderRotation() * convertInches; 
+      //currentH = getHorizontalEncoderRotation() * convertInches;
       
       deltaEn = currentEn - previousEn;
       coor.deltaH = currentH - previousH;
@@ -528,8 +528,8 @@ int getPosition() {
 
 
 void hi() {
-  horizontalTracker.resetRotation();
-  horizontalTracker.setRotation(0, deg);
+  //horizontalTracker.resetRotation();
+  //horizontalTracker.setRotation(0, deg);
   while (true) {
     printf("encoder h: %f\n", getHorizontalEncoderRotation());
   }
