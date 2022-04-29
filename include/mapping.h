@@ -12,3 +12,5 @@ void skillsBackup();
 
 void testPID();
 void test3();
+
+void visionTesting();

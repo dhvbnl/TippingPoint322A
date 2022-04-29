@@ -215,7 +215,7 @@ void rearClampCheck() {
 void setFrontClamp() {
   if ((getL1Pos() && pnumaticDelayFront > 20)) {
     frontClampStandoff.set(!frontClampStandoff.value());
-    wait(50, msec);
+    //wait(50, msec);
     frontClamp.set(!frontClamp.value());
     pnumaticDelayFront = 0;
   } else {
@@ -223,7 +223,7 @@ void setFrontClamp() {
   }
 }
 
-void setGoalCover(){
+void setGoalCover(){ 
   if ((getRightPos() && pnumaticDelayCover > 20)) {
     goalCover.set(!goalCover.value());
     pnumaticDelayCover = 0;
@@ -232,7 +232,12 @@ void setGoalCover(){
   }
 }
 
-void setFrontClampAuton() { frontClamp.set(!frontClamp.value()); }
+void setFrontClampAuton() { 
+  frontClamp.set(!frontClamp.value()); 
+frontClampStandoff.set(!frontClampStandoff.value());
+}
+
+void setGoalCoverAuton(){ goalCover.set(!goalCover.value()); }
 
 int getFourBarSpeed() {
   int armVal = getFourBarCurPos();

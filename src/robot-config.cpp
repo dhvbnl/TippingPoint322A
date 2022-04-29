@@ -19,12 +19,12 @@ motor rightBackDrive = motor(PORT20, ratio18_1, false);
 
 motor fourBar = motor(PORT17, ratio18_1, false);
 
-motor intake = motor(PORT5, ratio18_1, true);
+motor intake = motor(PORT6, ratio18_1, true);
 
 inertial inert = inertial(PORT9);
 
 triport bottomExpander = triport(PORT13);
-triport topExander = triport(PORT7);
+triport topExander = triport(PORT21);
 
 //encoder verticalTracker = encoder(Expander.A);
 //encoder horizontalTracker = encoder(Expander.E);
@@ -36,24 +36,24 @@ digital_out frontClampStandoff = digital_out(topExander.E);
 digital_out goalCover = digital_out(topExander.D);
 
 limit rearClampLimit = limit(Brain.ThreeWirePort.C);
-limit rearGoalLimit = limit(Brain.ThreeWirePort.G);
+limit rearGoalLimit = limit(bottomExpander.E);
 
 pot fourBarPot = pot(bottomExpander.D);
 
-line frontLineTracker = line(Brain.ThreeWirePort.D);
+line frontLineTracker = line(topExander.G);
 line intakeLineTracker = line(Brain.ThreeWirePort.A);
 
-sonar rearSonar = sonar(bottomExpander.C);
+sonar rearSonar = sonar(bottomExpander.G);
 
 //home values
-//signature REDGOAL = signature (1, 10267, 11207, 10736, -835, -387, -610, 11, 0);
-//signature YELLOWGOAL = signature (2, 2057, 2409, 2234, -3213, -2875, -3044, 9.2, 0);
-//signature BLUEGOAL = signature (3, -2759, -2009, -2384, 11045, 12621, 11834, 4.5, 0);
+signature REDGOAL = signature (1, 10267, 11207, 10736, -835, -387, -610, 11, 0);
+signature YELLOWGOAL = signature (2, 2057, 2409, 2234, -3213, -2875, -3044, 9.2, 0);
+signature BLUEGOAL = signature (3, -2759, -2009, -2384, 11045, 12621, 11834, 4.5, 0);
 
 //comp values
-signature REDGOAL = signature (1, 10267, 11207, 10736, -835, -387, -610, 11, 0);
-signature YELLOWGOAL = signature (2, 2057, 2409, 2234, -3213, -2875, -3044, 9.4, 0);
-signature BLUEGOAL = signature (3, -2759, -2009, -2384, 11045, 12621, 11834, 6.5, 0);
+//signature REDGOAL = signature (1, 10267, 11207, 10736, -835, -387, -610, 11, 0);
+//signature YELLOWGOAL = signature (2, 2057, 2409, 2234, -3213, -2875, -3044, 9.4, 0);
+//signature BLUEGOAL = signature (3, -2759, -2009, -2384, 11045, 12621, 11834, 6.5, 0);
 
 vision frontVision = vision (PORT5, 25, REDGOAL, YELLOWGOAL, BLUEGOAL);
 vision rearVision = vision (PORT8, 25, REDGOAL, YELLOWGOAL, BLUEGOAL);

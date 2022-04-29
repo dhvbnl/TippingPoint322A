@@ -67,7 +67,8 @@ void autonomous(void) {
   if (redSide) {
     switch (autonToRun) {
     case 0:
-      allianceMain(red, REDGOAL);
+      //visionTesting();
+      skills();
       break;
     case 1:
       allianceRightNeutral(red, REDGOAL);

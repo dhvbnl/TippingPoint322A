@@ -21,6 +21,7 @@ void setGoalCover();
 
 void setRearClampAuton();
 void setFrontClampAuton();
+void setGoalCoverAuton();
 
 void rearClampCheck();
 

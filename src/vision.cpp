@@ -36,12 +36,12 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
     }
   }
 
-  vision::object test = frontVision.largestObject;
+  vision::object goal = frontVision.largestObject;
   if (!risk) {
-    while (test.centerX < centerX - centerTol || test.centerX > centerX + centerTol) {
-      if (test.centerX < centerX - centerTol) {
+    while (goal.centerX < centerX - centerTol || goal.centerX > centerX + centerTol) {
+      if (goal.centerX < centerX - centerTol) {
         setDrivetrainSpeed(-4, 4);
-      } else if (test.centerX > centerX + centerTol) {
+      } else if (goal.centerX > centerX + centerTol) {
         setDrivetrainSpeed(4, -4);
       }
       wait(20, msec);
@@ -51,17 +51,17 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
 
   int leftSpeed = basespeed;
   int rightSpeed = basespeed;
-  while (test.centerY < 140) {
-    if (test.centerY > 120) {
-      basespeed = (140 - test.centerY) / 8 + 3;
+  while (goal.centerY < 140) {
+    if (goal.centerY > 120) {
+      basespeed = (140 - goal.centerY) / 8 + 3;
     }
-    if (test.centerY < 165) {
-      if (test.centerX < centerX) {
+    if (goal.centerY < 165) {
+      if (goal.centerX < centerX) {
         rightSpeed = basespeed;
-        leftSpeed = basespeed + (test.centerX - centerX) * 0.1;
+        leftSpeed = basespeed + (goal.centerX - centerX) * 0.1;
       } else {
         leftSpeed = basespeed;
-        rightSpeed = basespeed - (test.centerX - centerX) * 0.1;
+        rightSpeed = basespeed - (goal.centerX - centerX) * 0.1;
       }
     } else {
       leftSpeed = basespeed;
@@ -72,7 +72,7 @@ void findFrontGoal(color col, signature sig, int basespeed, bool right,
     frontVision.takeSnapshot(sig);
   }
   while (frontLineTracker.value(pct) > 60) {
-    setDrivetrainSpeed(3, 3);
+    setDrivetrainSpeed(5, 5);
     wait(20, msec);
   }
   setDrivetrainSpeed(0, 0);
@@ -98,42 +98,38 @@ void findRearGoal(color col, signature sig, int basespeed, bool right,bool check
     while (rearVision.objectCount == 0 ||
            rearVision.largestObject.height < 15 ||
            rearVision.largestObject.width < 35) {
+      
       wait(20, msec);
       rearVision.takeSnapshot(sig);
     }
   }
-
-  vision::object test = rearVision.largestObject;
+  vision::object goal = rearVision.largestObject;
   if (!risk) {
-    while (test.centerX < centerX - centerTol ||
-           test.centerX > centerX + centerTol) {
-      if (test.centerX < centerX - centerTol) {
+    while (goal.centerX < centerX - centerTol ||
+           goal.centerX > centerX + centerTol) {
+      if (goal.centerX < centerX - centerTol) {
         setDrivetrainSpeed(-3, 3);
-      } else if (test.centerX > centerX + centerTol) {
+      } else if (goal.centerX > centerX + centerTol) {
         setDrivetrainSpeed(3, -3);
       }
       wait(20, msec);
       rearVision.takeSnapshot(sig);
     }
   }
-
   int leftSpeed = -basespeed;
   int rightSpeed = -basespeed;
   int goalDist = rearSonar.distance(inches);
-  while(goalDist < 5){
-    wait(20, msec);
-  }
   while (goalDist > 9) {
     if (goalDist < 21) {
       basespeed = (goalDist) / 3;
     }
-    if (test.centerY < centerX) {
-      if (test.centerX < centerX) {
+    if (goal.centerY < centerX) {
+      if (goal.centerX < centerX) {
         rightSpeed = -basespeed;
-        leftSpeed = -basespeed + (test.centerX - centerX) * 0.07;
+        leftSpeed = -basespeed + (goal.centerX - centerX) * 0.07;
       } else {
         leftSpeed = -basespeed;
-        rightSpeed = -basespeed - (test.centerX - centerX) * 0.07;
+        rightSpeed = -basespeed - (goal.centerX - centerX) * 0.07;
       }
     } else {
       leftSpeed = -basespeed;

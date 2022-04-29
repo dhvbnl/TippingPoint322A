@@ -1,5 +1,15 @@
 #include "vex.h" 
 
+void visionTesting(){
+  wait(2, sec);
+  thread  clamp(setFrontClampAuton);
+  //setGoalCoverAuton();
+  findFrontGoal(yellow, YELLOWGOAL, 12, true, true, false);
+  setFrontClampAuton();
+  timeDrive(-8, 1000);
+}
+
+
 void allianceMain(color col, signature sig) {
   /*while(true){
     Controller.Screen.clearLine();
@@ -149,9 +159,17 @@ void skills(){
   setFrontClampAuton();
   timeDrive(-4, 400);
   setRearClampAuton();
-  wait(100, msec);
+  wait(1000, msec);
+
+  changeArmPos(1100);
+  intakeMove(1);
+  timeDrive(3, 3000);
+  wait(200, msec);
+  intakeMove(0);
+
   
-  timeDrive(4, 500);
+  timeDrive(-4, 500);
+  changeArmPos(0);
   drivetrainTurn(80);
   findFrontGoal(yellow, YELLOWGOAL, 8, true, true, false);
   setFrontClampAuton();
@@ -189,76 +207,49 @@ void skills(){
   timeDrive(5, 1500);
   setFrontClampAuton();
 
-  //get red goal #1
-  timeDrive(-5, 500);
-  drivetrainTurn(200);
-  changeArmPos(0);
-  findRearGoal(red, REDGOAL, 6, true, true, false);
-  setRearClampAuton();
-  wait(100, msec);
-  findFrontGoal(yellow, YELLOWGOAL, 7, true, true, false);
-  setFrontClampAuton();
-  intakeMove(1);
-  changeArmPos(300);
-  drivetrainTurn(230);
-  timeDrive(7, 2000);
-  changeArmPos(0);
-  wait(1000, msec);
-  setFrontClampAuton();
-  timeDrive(-7, 300);
-  drivetrainTurn(90);
-  findFrontGoal(yellow, YELLOWGOAL, 7, true, true, false);
-  setFrontClampAuton();
-  drivetrainTurn(320);
-  changeArmPos(1100);
-  wait(300, msec);
-  timeDrive(7, 1500);
-  wait(400, msec);
-  setFrontClampAuton();
-  wait(500, msec);
+//   //get yellow goal #2 and blue goal #2
+//   timeDrive(-5, 500);
+//   changeArmPos(0);
+//   drivetrainTurn(245);
+//   timeDrive(5, 1000);
+//   findFrontGoal(yellow, YELLOWGOAL, 7, true, true, false);
+//   setFrontClampAuton();
+//   changeArmPos(300);
+//   drivetrainTurn(270);
+//   timeDrive(5, 500);
+//   findRearGoal(blue, BLUEGOAL, 5, true, true, false);
+//   setRearClampAuton();
+//   wait(400, msec);
+//   intakeMove(1);
+//   drivetrainTurn(90); // maybe arc it?
+//   timeDrive(7, 800);
+//   drivetrainTurn(50);
+//   timeDrive(5, 1000);
+//   wait(200, msec);
+//   intakeMove(0);
+
+// //place yellow #2 and blue #2 on platform
+//   setFrontClampAuton();
+//   wait(200, msec);
+//   timeDrive(-5, 1000);
+//   changeArmPos(0); 
+//   setRearClampAuton();
+//   wait(100, msec);
+//   timeDrive(5, 500);
+//   drivetrainTurn(245);//fix
+//   findFrontGoal(blue, BLUEGOAL, 5, true, true, false);
+//   setFrontClampAuton();
+//   changeArmPos(1100);
+//   drivetrainTurn(65);
+//   timeDrive(5, 1000);
+//   setFrontClampAuton();
 
 
-  timeDrive(-5, 1000);
-  wait(200, msec);
-  changeArmPos(0); 
-  setRearClampAuton();
-  wait(100, msec);
-  timeDrive(5, 500);
-  drivetrainTurn(95);
-  findFrontGoal(red, REDGOAL, 5, true, true, false);
-  setFrontClampAuton();
-  changeArmPos(1100);
-  drivetrainTurn(315);
-  wait(200, msec);
-  timeDrive(5, 1500);
-  setFrontClampAuton();
+//get yellow #3
+  drivetrainTurn(270);
 
-  timeDrive(-5, 500);
-  changeArmPos(0);
-  findFrontGoal(blue, BLUEGOAL, 7, false, true, false);
-  setFrontClampAuton();
-  changeArmPos(1100);
-  drivetrainTurn(70);
-  timeDrive(7, 2800);
-  setFrontClampAuton();
-  wait(500, msec);
-  timeDrive(-7, 2000);
-  intakeMove(1);
-  changeArmPos(0);
-  wait(500, msec);
-  findFrontGoal(red, REDGOAL, 5, true, true, false);
-  intakeMove(0);
-  setFrontClampAuton();
-  wait(500, msec);
-  changeArmPos(1100);
-  timeDrive(-8, 2000);
-  wait(500, msec);
-  drivetrainTurn(315);
-  timeDrive(5, 1500);
-  setFrontClampAuton();
-  wait(200, msec);
-  timeDrive(-5, 500);
-  //get center goal
+
+
   
   odometry.interrupt();
   lifts.interrupt();
