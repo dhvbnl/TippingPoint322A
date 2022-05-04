@@ -67,9 +67,9 @@ void drivetrainTurn(double targetdeg) {
   //    kD = 1.5;
   //  }
 
-  double kP = 0.7;
-  double kI = 0.003;
-  double kD = 1.5;
+  double kP = 1;
+  double kI = 0.004;
+  double kD = 2.25;
 
   // double kP = 0.55;
   // double kI = 0.005;
@@ -179,8 +179,7 @@ void drivetrainTurn(double targetdeg) {
   rightBackDrive.stop();
   leftBackDrive.stop();
   
-  coor.xPos = tempX;
-  coor.yPos = tempY;
+  printf("inertial %f \n", getInertialHeading());
   // printf("x: %f", coor.xPos);
   // printf("y: %f\n", coor.yPos);
 
@@ -419,8 +418,8 @@ int getPos()
       previousH = currentH;
 
       //printf("heading deg: %f", coor.clockwiseHeadRad * (180 / M_PI));
-       printf("x: %f", coor.xPos);
-       printf("y: %f\n", coor.yPos);
+      //  printf("x: %f", coor.xPos);
+      //  printf("y: %f\n", coor.yPos);
       //printf("%f\n", coor.headingRad);
 
       wait(100, msec); 
@@ -431,8 +430,8 @@ int getPos()
 }
 
 int getPosition() {
-  const double verticalRad = 1.25;
-  const double horizRad = 3.0;
+  //const double verticalRad = 1.25;
+  //const double horizRad = 3.0;
   const double verticaldisp = 1.25;
   const double horizdisp = 2.0;
 
@@ -445,7 +444,7 @@ int getPosition() {
 
   double deltaX = 0.0;
   double deltaY = 0.0;
-  double radius = 0.0;
+  //double radius = 0.0;
   double prevHeadRad = 0.0;
   double inertialHead = 0.0;
 
@@ -530,9 +529,14 @@ int getPosition() {
 void hi() {
   //horizontalTracker.resetRotation();
   //horizontalTracker.setRotation(0, deg);
-  while (true) {
-    printf("encoder h: %f\n", getHorizontalEncoderRotation());
-  }
+  //  findRearGoal(blue, BLUEGOAL, 5, true, true, false);
+  //  setRearClampAuton();
+  //timeDrive(4, 3000);
+  setFrontClampAuton();
+  wait(2, sec);
+  setFrontClampAuton();
+  // findFrontGoal(blue, BLUEGOAL, 5, false, true, false);
+  // setFrontClampAuton();
 } 
 void printinertial() {
   while (true) {

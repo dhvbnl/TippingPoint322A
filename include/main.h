@@ -1,1 +1,2 @@
 bool taskStop();
+int runAuton();

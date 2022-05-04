@@ -17,10 +17,12 @@ void fourBarSeasaw();
 
 void setRearClamp();
 void setFrontClamp();
+void flipStandoff(int run);
 void setGoalCover();
 
 void setRearClampAuton();
 void setFrontClampAuton();
+void setGoalCoverAuton();
 
 void rearClampCheck();
 

@@ -1,10 +1,14 @@
-void allianceMain(vex::color col, vex::vision::signature sig);
+void allianceRightRightWin(vex::color col, vex::vision::signature sig, bool runCover);
 
-void allianceRightNeutral(vex::color col, vex::vision::signature sig);
+void allianceRightRight(vex::color col, vex::vision::signature sig, bool runCover);
 
-void allianceMiddleNeutral(vex::color col, vex::vision::signature sig);
+void allianceRightMiddle(vex::color col, vex::vision::signature sig, bool runCover);
  
-void allianceLeftNeutral(vex::color col, vex::vision::signature sig);
+void allianceLeftLeft(vex::color col, vex::vision::signature sig, bool runCover);
+
+void allianceLeftMiddle(vex::color col, vex::vision::signature sig, bool runCover);
+
+void allianceRightRightMiddle(vex::color col, vex::vision::signature sig, bool runCover);
 
 void skills();
 
@@ -12,3 +16,5 @@ void skillsBackup();
 
 void testPID();
 void test3();
+
+void visionTesting();
