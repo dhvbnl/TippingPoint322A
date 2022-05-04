@@ -228,6 +228,24 @@ void timeDrive(double speed, int timeLength) {
   rightBackDrive.stop();
 }
 
+void timeTurn(double left, double right, int timeLength) {
+  leftFrontDrive.spin(fwd, left, volt);
+  rightFrontDrive.spin(fwd, right, volt);
+  leftMiddleDrive.spin(fwd, left, volt);
+  rightMiddleDrive.spin(fwd, right, volt);
+  leftBackDrive.spin(fwd, left, volt);
+  rightBackDrive.spin(fwd, right, volt);
+
+  wait(timeLength, msec);
+
+  leftFrontDrive.stop();
+  rightFrontDrive.stop();
+  leftMiddleDrive.stop();
+  rightMiddleDrive.stop();
+  leftBackDrive.stop();
+  rightBackDrive.stop();
+}
+
 /*//turn based on different left and right speed to move in a curve
 void arcturn (double left, double right, double turnangle) {
   while (getInertialHeading() < turnangle - 2 || getInertialHeading() > turnangle + 2) {

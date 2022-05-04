@@ -5,9 +5,9 @@ const int lowerBound = 1450;
 //const int seasawHeight = 2285;
 const int upperBound = 2520;
 
-const int armBoundsDeg = 650;
-const int ringHeightDiff = 150;
-const int seasawHeightDiff = 500;
+const int armBoundsDeg = 4000;
+const int ringHeightDiff = 800;
+const int seasawHeightDiff = 3000;
 
 int armPos;
 
@@ -32,6 +32,7 @@ int intakeState = 0;
 int runIntake = 0;
 bool calibrated = false;
 int intakeSpeed = 0;
+bool standoff = true;
 
 int calibrateDelay = 0;
 
@@ -56,7 +57,7 @@ void setFourBarSpeed(double speed) {
   fourBar.spin(fwd, speed / voltageConverstion, volt);
 }
 
-void setFourBarSpeedHolding(double speed) {
+/*void setFourBarSpeedHolding(double speed) {
   if (getBPos()) {
     lastPos = bottomBoundFourBar;
   } else if (getAPos()) {
@@ -76,6 +77,29 @@ void setFourBarSpeedHolding(double speed) {
     setFourBarSpeed(speed);
     lastPos = getFourBarCurPos();
   } else if(speed < 0) {
+    setFourBarSpeed(speed);
+    lastPos = getFourBarCurPos();
+  } else {
+    setFourBarPosition(lastPos);
+  }
+}*/
+
+void setFourBarSpeedHolding(double speed) {
+  if (getBPos()) {
+    lastPos = bottomBoundFourBar;
+  } else if (getAPos()) {
+    lastPos = ringHeightDeg;
+  } else if (getXPos()) {
+    lastPos = seesawHeightDeg;
+  }
+  if(getUpPos() && calibrateDelay){
+    findBottomBound();
+    calibrateDelay = 0;
+  } else{
+    calibrateDelay++;
+  }
+  if (speed != 0) {
+    speed = speed + (speed * voltageConverstion - fourBar.velocity(pct));
     setFourBarSpeed(speed);
     lastPos = getFourBarCurPos();
   } else {
@@ -125,7 +149,7 @@ void fourBarGround() {
   while ((getFourBarCurPos() < bottomBoundFourBar ||
           getFourBarCurPos() > bottomBoundFourBar + 8) &&
          getAxis2Pos() == 0 && !buttonPressed()) {
-    setFourBarSpeed(1.25 * (bottomBoundFourBar - getFourBarCurPos()));
+    setFourBarSpeed(0.5 * (bottomBoundFourBar - getFourBarCurPos()));
     wait(20, msec);
   }
   lastPos = getFourBarCurPos();
@@ -137,7 +161,7 @@ void fourBarRing() {
   while ((getFourBarCurPos() < ringHeightDeg - 5 ||
           getFourBarCurPos() > ringHeightDeg + 5) &&
          getAxis2Pos() == 0 && !buttonPressed()) {
-    setFourBarSpeed(1.25 * (ringHeightDeg - getFourBarCurPos()));
+    setFourBarSpeed(0.5 * (ringHeightDeg - getFourBarCurPos()));
     wait(20, msec);
   }
   lastPos = getFourBarCurPos();
@@ -212,9 +236,20 @@ void rearClampCheck() {
     rearClamp.set(!rearClamp.value());
 }
 
+void flipStandoff(int run){
+  if(run == 5){
+    standoff = false;
+    frontClampStandoff.set(!frontClampStandoff.value());
+  } else{
+    standoff = true;
+  }
+}
+
 void setFrontClamp() {
   if ((getL1Pos() && pnumaticDelayFront > 20)) {
-    frontClampStandoff.set(!frontClampStandoff.value());
+    if(standoff){
+      frontClampStandoff.set(!frontClampStandoff.value());
+    }
     //wait(50, msec);
     frontClamp.set(!frontClamp.value());
     pnumaticDelayFront = 0;
@@ -244,11 +279,11 @@ int getFourBarSpeed() {
   int returnVal = getAxis2Pos();
   if (returnVal > 0)
     return returnVal > topBoundFourBar - armVal
-               ? 0.5 * (topBoundFourBar - armVal)
+               ? 0.2 * (topBoundFourBar - armVal)
                : returnVal;
   else if (returnVal < 0)
     return returnVal < bottomBoundFourBar - armVal
-               ? 0.5 * (bottomBoundFourBar - armVal)
+               ? 0.2 * (bottomBoundFourBar - armVal)
                : returnVal;
   else
     return 0;
@@ -288,7 +323,7 @@ void findBottomBound() {
     do {
       fourBar.spin(fwd, -7, volt);
       wait(100, msec);
-    } while (fourBar.torque() < 0.8);
+    } while (fourBar.torque() < 0.3);
     fourBar.stop();
     bottomBoundFourBar = getFourBarCurPos();
     topBoundFourBar = bottomBoundFourBar + armBoundsDeg;

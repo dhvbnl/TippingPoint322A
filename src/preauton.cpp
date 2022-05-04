@@ -20,7 +20,7 @@ void preauton() {
   calibrateInertial();
   frontVision.setLedColor(0, 255, 0);
   rearVision.setLedColor(0, 255, 0);
-  //Controller.Screen.print("Preauton Complete");
+  Controller.Screen.print("Preauton Complete");
  // thread controllerScreen(screenGUI);
 }
 

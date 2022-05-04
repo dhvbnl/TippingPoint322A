@@ -53,6 +53,7 @@ void calibrateInertial();
 void waitCalibrate();
 void drivetrainTurn(double targetdeg);
 void timeDrive(double speed, int timeLength);
+void timeTurn(double left, double right, int timeLength);
 void arcturn (double left, double right, double turnangle);
 void arcturnTime (double left, double right, int length);
 

@@ -23,7 +23,7 @@ public:
 
   void render() {
     Brain.Screen.drawRectangle(x, y, width, height, buttonColor);
-    Brain.Screen.printAt(x + 15, y + 50, false, text.c_str());
+    Brain.Screen.printAt(x + 5, y + 50, false, text.c_str());
   }
 
   bool isClicked() {
@@ -39,6 +39,7 @@ competition Competition;
 
 int autonToRun = 0;
 bool redSide = true;
+bool runCover = false;
 color autonColor = red;
 signature autonSig = REDGOAL;
 bool selected = false;
@@ -47,39 +48,44 @@ int xSize = 107;
 int ySize = 107;
 
 Button autonButtons[] = {
-    Button(spacing, spacing, xSize, ySize, "NWIN", purple, white),
-    Button(2 * spacing + xSize, spacing, xSize, ySize, "RIGHT", black, white),
+    Button(spacing, spacing, xSize, ySize, "LL", purple, white),
+    Button(2 * spacing + xSize, spacing, xSize, ySize, "RRM", black, white),
 
-    Button(3 * spacing + 2 * xSize, 10, xSize, ySize, "LEFT", black, white),
-    Button(4 * spacing + 3 * xSize, 10, xSize, ySize, "MID", black, white),
+    Button(3 * spacing + 2 * xSize, 10, xSize, ySize, "RM", black, white),
+    Button(4 * spacing + 3 * xSize, 10, xSize, ySize, "RR", black, white),
 
     Button(spacing, spacing * 2 + ySize, xSize, ySize, "WIN", black, white),
     Button(spacing * 2 + xSize, spacing * 2 + ySize, xSize, ySize, "SKILLS", black,
            white),
 
-    Button(3 * spacing + 2 * xSize, spacing * 2 + ySize, xSize, ySize, "RED",
+    Button(3 * spacing + 2 * xSize, spacing * 2 + ySize, xSize, ySize, "G",
            red, white),
-    Button(4 * spacing + 3 * xSize, spacing * 2 + ySize, xSize, ySize, "BLUE",
+    Button(4 * spacing + 3 * xSize, spacing * 2 + ySize, xSize, ySize, "RED",
            black, white),
 };
 
 void autonomous(void) {
   if (redSide) {
+    if(!selected){
+      autonToRun = 5;
+    }
     switch (autonToRun) {
     case 0:
       //visionTesting();
-      skills();
+      //skills();
+      allianceLeftLeft(red, REDGOAL, runCover);
       break;
     case 1:
-      allianceRightNeutral(red, REDGOAL);
+      allianceRightRightMiddle(red, REDGOAL, runCover);
       break;
     case 2:
-      allianceLeftNeutral(red, REDGOAL);
+      allianceRightMiddle(red, REDGOAL, runCover);
       break;
     case 3:
-      allianceMiddleNeutral(red, REDGOAL);
+      allianceRightRight(red, REDGOAL, runCover);
       break;
     case 4: // code
+      allianceRightRightWin(red, REDGOAL, runCover);
       break;
     case 5:
       skills();
@@ -92,18 +98,19 @@ void autonomous(void) {
   } else {
     switch (autonToRun) {
     case 0:
-      allianceMain(blue, BLUEGOAL);
+      allianceLeftLeft(blue, BLUEGOAL, runCover);
       break;
     case 1:
-      allianceRightNeutral(blue, BLUEGOAL);
+      allianceRightRightMiddle(blue, BLUEGOAL, runCover);
       break;
     case 2:
-      allianceLeftNeutral(blue, BLUEGOAL);
+      allianceRightMiddle(blue, BLUEGOAL, runCover);
       break;
     case 3:
-      allianceMiddleNeutral(blue, BLUEGOAL);
+      allianceRightRight(blue, BLUEGOAL, runCover);
       break;
     case 4: // code
+      allianceRightRightWin(blue, BLUEGOAL, runCover);
       break;
     case 5:
       skills();
@@ -114,6 +121,10 @@ void autonomous(void) {
       break;
     }
   }
+}
+
+int runAuton(){
+  return autonToRun;
 }
 
 int main() {
@@ -141,25 +152,35 @@ int main() {
             selected = true;
           }
         }
-        for (int i = 6; i < 8; i++) {
-          if (autonButtons[i].isClicked()) {
-            if(i == 6){
-              rearVision.setLedColor(255, 0, 0);
-              autonButtons[7].buttonColor = black;
-              autonButtons[i].buttonColor = red;
-              autonButtons[7].render();
-              autonButtons[i].render();
-              redSide = true; 
-            } else if(i == 7){
-              rearVision.setLedColor(0, 0, 255);
-              autonButtons[6].buttonColor = black;
-              autonButtons[i].buttonColor = blue;
+          if (autonButtons[6].isClicked()) {
+            if(!runCover){
+              autonButtons[6].buttonColor = orange;
               autonButtons[6].render();
-              autonButtons[i].render();
+              runCover = true; 
+            } else if(runCover){
+              autonButtons[6].buttonColor = black;
+              autonButtons[6].render();
+              runCover = false; 
+            }
+            wait(300, msec);
+          }
+
+          if (autonButtons[7].isClicked()) {
+            if(!redSide){
+              rearVision.setLedColor(255, 0, 0);
+              autonButtons[7].buttonColor = red;
+              autonButtons[7].text = "RED";
+              autonButtons[7].render();
+              redSide = true; 
+            } else if(redSide){
+              rearVision.setLedColor(0, 0, 255);
+              autonButtons[7].buttonColor = blue;
+              autonButtons[7].text = "BLUE";
+              autonButtons[7].render();
               redSide = false;
             }
+            wait(300, msec);
           }
-        }
         if(redSide){
           rearVision.setLedColor(255, 0, 0);
         } else{
